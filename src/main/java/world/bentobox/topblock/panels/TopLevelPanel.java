@@ -1,0 +1,500 @@
+///
+// Created by BONNe
+// Copyright - 2021
+///
+
+package world.bentobox.topblock.panels;
+
+
+import java.io.File;
+import java.util.List;
+import java.util.UUID;
+
+import org.bukkit.Material;
+import org.bukkit.World;
+
+import world.bentobox.bentobox.api.panels.PanelItem;
+import world.bentobox.bentobox.api.panels.TemplatedPanel;
+import world.bentobox.bentobox.api.panels.builders.PanelItemBuilder;
+import world.bentobox.bentobox.api.panels.builders.TemplatedPanelBuilder;
+import world.bentobox.bentobox.api.panels.reader.ItemTemplateRecord;
+import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.topblock.TopBlock;
+import world.bentobox.topblock.TopBlockManager.TopTenData;
+import world.bentobox.topblock.util.Utils;
+
+
+/**
+ * This panel opens top likes panel
+ */
+public class TopLevelPanel
+{
+// ---------------------------------------------------------------------
+// Section: Internal Constructor
+// ---------------------------------------------------------------------
+
+
+    /**
+     * This is internal constructor. It is used internally in current class to avoid creating objects everywhere.
+     *
+     * @param addon Level object.
+     * @param user User who opens Panel.
+     * @param world World where gui is opened
+     * @param permissionPrefix Permission Prefix
+     */
+    private TopLevelPanel(TopBlock addon, User user, World world, String permissionPrefix)
+    {
+        this.addon = addon;
+        this.user = user;
+        this.world = world;
+
+        this.iconPermission = permissionPrefix + "topblock.icon";
+
+        this.topIslands = this.addon.getManager().getTopTen(TopBlock.TEN);
+    }
+
+
+    /**
+     * Build method manages current panel opening. It uses BentoBox PanelAPI that is easy to use and users can get nice
+     * panels.
+     */
+    public void build()
+    {
+        TemplatedPanelBuilder panelBuilder = new TemplatedPanelBuilder();
+
+        panelBuilder.user(this.user);
+        panelBuilder.world(this.world);
+
+        panelBuilder.template("top_panel", new File(this.addon.getDataFolder(), "panels"));
+
+        //panelBuilder.registerTypeBuilder("VIEW", this::createViewerButton);
+        panelBuilder.registerTypeBuilder("TOP", this::createPlayerButton);
+
+        // Register unknown type builder.
+        panelBuilder.build();
+    }
+
+
+// ---------------------------------------------------------------------
+// Section: Methods
+// ---------------------------------------------------------------------
+
+
+    /**
+     * Creates fallback based on template.
+     * @param template Template record for fallback button.
+     * @param index Place of the fallback.
+     * @return Fallback panel item.
+     */
+    private PanelItem createFallback(ItemTemplateRecord template, long index)
+    {
+        if (template == null)
+        {
+            return null;
+        }
+
+        final String reference = "topblock.gui.buttons.island.";
+
+        PanelItemBuilder builder = new PanelItemBuilder();
+
+        if (template.icon() != null)
+        {
+            builder.icon(template.icon().clone());
+        }
+
+        if (template.title() != null)
+        {
+            builder.name(this.user.getTranslation(this.world, template.title(),
+                "[name]", String.valueOf(index)));
+        }
+        else
+        {
+            builder.name(this.user.getTranslation(this.world, reference,
+                "[name]", String.valueOf(index)));
+        }
+
+        if (template.description() != null)
+        {
+            builder.description(this.user.getTranslation(this.world, template.description(),
+                "[number]", String.valueOf(index)));
+        }
+
+        builder.amount(index != 0 ? (int) index : 1);
+
+        return builder.build();
+    }
+
+
+    /**
+     * This method creates player icon with warp functionality.
+     *
+     * @return PanelItem for PanelBuilder.
+     */
+    private PanelItem createPlayerButton(ItemTemplateRecord template, TemplatedPanel.ItemSlot itemSlot)
+    {
+        int index = (int) template.dataMap().getOrDefault("index", 0);
+
+        if (index < 1)
+        {
+            return this.createFallback(template.fallback(), index);
+        }
+
+        TopTenData islandTopRecord = this.topIslands.size() < index ? null : this.topIslands.get(index - 1);
+
+        if (islandTopRecord == null)
+        {
+            return this.createFallback(template.fallback(), index);
+        }
+
+        return this.createIslandIcon(template, islandTopRecord, index);
+    }
+
+
+    /**
+     * This method creates button from template for given island top record.
+     * @param template Icon Template.
+     * @param islandTopRecord Island Top Record.
+     * @param index Place Index.
+     * @return PanelItem for PanelBuilder.
+     */
+    private PanelItem createIslandIcon(ItemTemplateRecord template, TopTenData islandTopRecord, int index)
+    {
+        // Get player island.
+        Island island = addon.getIslands().getIslandById(islandTopRecord.islandId()).orElse(null);
+
+        if (island == null)
+        {
+            return this.createFallback(template.fallback(), index);
+        }
+
+        PanelItemBuilder builder = new PanelItemBuilder();
+
+        this.populateIslandIcon(builder, template, island);
+        this.populateIslandTitle(builder, template, island);
+        this.populateIslandDescription(builder, template, island, islandTopRecord, index);
+
+        builder.amount(index);
+        /*
+        // Get only possible actions, by removing all inactive ones.
+        List<ItemTemplateRecord.ActionRecords> activeActions = new ArrayList<>(template.actions());
+
+        activeActions.removeIf(action ->
+        {
+            switch (action.actionType().toUpperCase())
+            {
+                case "WARP" -> {
+                    return island.getOwner() == null ||
+                        this.addon.getWarpHook() == null ||
+                        !this.addon.getWarpHook().getWarpSignsManager().hasWarp(this.world, island.getOwner());
+                }
+                case "VISIT" -> {
+                    return island.getOwner() == null ||
+                        this.addon.getVisitHook() == null ||
+                        !this.addon.getVisitHook().getAddonManager().preprocessTeleportation(this.user, island);
+                }
+                case "VIEW" -> {
+                    return island.getOwner() == null ||
+                        !island.getMemberSet(RanksManager.MEMBER_RANK).contains(this.user.getUniqueId());
+                }
+                default -> {
+                    return false;
+                }
+            }
+        });
+
+        // Add Click handler
+        builder.clickHandler((panel, user, clickType, i) ->
+        {
+            for (ItemTemplateRecord.ActionRecords action : activeActions)
+            {
+                if (clickType == action.clickType() || action.clickType() == ClickType.UNKNOWN)
+                {
+                    switch (action.actionType().toUpperCase())
+                    {
+                        case "WARP" -> {
+                            this.user.closeInventory();
+                            this.addon.getWarpHook().getWarpSignsManager().warpPlayer(this.world, this.user, island.getOwner());
+                        }
+                        case "VISIT" -> {
+                            // The command call implementation solves necessity to check for all visits options,
+                            // like cool down, confirmation and preprocess in single go. Would it be better to write
+                            // all logic here?
+
+                            this.addon.getPlugin().getIWM().getAddon(this.world).
+                                flatMap(GameModeAddon::getPlayerCommand).ifPresent(command ->
+                                {
+                                    String mainCommand =
+                                        this.addon.getVisitHook().getSettings().getPlayerMainCommand();
+
+                                    if (!mainCommand.isBlank())
+                                    {
+                                        this.user.closeInventory();
+                                        this.user.performCommand(command.getTopLabel() + " " + mainCommand + " " + island.getOwner());
+                                    }
+                                });
+                        }
+                        case "VIEW" -> {
+                            this.user.closeInventory();
+                            // Open Detailed GUI.
+                            DetailsPanel.openPanel(this.addon, this.world, this.user);
+                        }
+                    }
+                }
+            }
+
+            return true;
+        });
+
+        // Collect tooltips.
+        List<String> tooltips = activeActions.stream().
+            filter(action -> action.tooltip() != null).
+            map(action -> this.user.getTranslation(this.world, action.tooltip())).
+            filter(text -> !text.isBlank()).
+            collect(Collectors.toCollection(() -> new ArrayList<>(template.actions().size())));
+
+        // Add tooltips.
+        if (!tooltips.isEmpty())
+        {
+            // Empty line and tooltips.
+            builder.description("");
+            builder.description(tooltips);
+        }
+    */
+        return builder.build();
+    }
+
+
+    /**
+     * Populate given panel item builder name with values from template and island objects.
+     *
+     * @param builder the builder
+     * @param template the template
+     * @param island the island
+     */
+    private void populateIslandTitle(PanelItemBuilder builder, 
+        ItemTemplateRecord template, 
+        Island island)
+    {
+        final String reference = "topblock.gui.buttons.island.";
+
+        // Get Island Name
+        String nameText;
+
+        if (island.getName() == null || island.getName().isEmpty())
+        {
+            nameText = this.user.getTranslation(reference + "owners-island",
+                "[player]",
+                island.getOwner() == null ?
+                    this.user.getTranslation(reference + "unknown") :
+                    this.addon.getPlayers().getName(island.getOwner()));
+        }
+        else
+        {
+            nameText = island.getName();
+        }
+
+        // Template specific title is always more important than custom one.
+        if (template.title() != null && !template.title().isBlank())
+        {
+            builder.name(this.user.getTranslation(this.world, template.title(),
+                "[name]", nameText));
+        }
+        else
+        {
+            builder.name(this.user.getTranslation(reference + "name", "[name]", nameText));
+        }
+    }
+
+
+    /**
+     * Populate given panel item builder icon with values from template and island objects.
+     *
+     * @param builder the builder
+     * @param template the template
+     * @param island the island
+     */
+    private void populateIslandIcon(PanelItemBuilder builder,
+        ItemTemplateRecord template,
+        Island island)
+    {
+        User owner = island.getOwner() == null ? null : User.getInstance(island.getOwner());
+        
+        // Get permission or island icon
+        String permissionIcon = owner == null ? null :
+            Utils.getPermissionValue(owner, this.iconPermission, null);
+
+        Material material;
+
+        if (permissionIcon != null && !permissionIcon.equals("*"))
+        {
+            material = Material.matchMaterial(permissionIcon);
+        }
+        else
+        {
+            material = null;
+        }
+
+        if (material != null)
+        {
+            if (!material.equals(Material.PLAYER_HEAD))
+            {
+                builder.icon(material);
+            }
+            else
+            {
+                builder.icon(owner.getName());
+            }
+        }
+        else if (template.icon() != null)
+        {
+            builder.icon(template.icon().clone());
+        }
+        else if (owner != null)
+        {
+            builder.icon(owner.getName());
+        }
+        else
+        {
+            builder.icon(Material.PLAYER_HEAD);
+        }
+    }
+
+
+    /**
+     * Populate given panel item builder description with values from template and island objects.
+     *
+     * @param builder the builder
+     * @param template the template
+     * @param island the island
+     * @param islandTopRecord the top record object
+     * @param index place index.
+     */
+    private void populateIslandDescription(PanelItemBuilder builder, 
+        ItemTemplateRecord template,
+        Island island, 
+        TopTenData islandTopRecord,
+        int index)
+    {
+        final String reference = "topblock.gui.buttons.island.";
+
+        // Get Owner Name
+        String ownerText = this.user.getTranslation(reference + "owner",
+            "[player]",
+            island.getOwner() == null ?
+                this.user.getTranslation(reference + "unknown") :
+                this.addon.getPlayers().getName(island.getOwner()));
+
+        // Get Members Text
+        String memberText;
+
+        if (island.getMemberSet().size() > 1)
+        {
+            StringBuilder memberBuilder = new StringBuilder(
+                this.user.getTranslationOrNothing(reference + "members-title"));
+
+            for (UUID uuid : island.getMemberSet())
+            {
+                User user = User.getInstance(uuid);
+
+                if (memberBuilder.length() > 0)
+                {
+                    memberBuilder.append("\n");
+                }
+
+                memberBuilder.append(
+                    this.user.getTranslationOrNothing(reference + "member",
+                        "[player]", user.getName()));
+            }
+
+            memberText = memberBuilder.toString();
+        }
+        else
+        {
+            memberText = "";
+        }
+
+        String placeText = this.user.getTranslation(reference + "place",
+            "[number]", String.valueOf(index));
+
+        String levelText = this.user.getTranslation(reference + "count",
+            "[number]", this.addon.getManager().formatLevel((long)islandTopRecord.blockNumber()));
+        
+        String lifetimeText = this.user.getTranslation(reference + "lifetime",
+                "[number]", this.addon.getManager().formatLevel(islandTopRecord.lifetime()));
+
+        // Template specific description is always more important than custom one.
+        if (template.description() != null && !template.description().isBlank())
+        {
+            builder.description(this.user.getTranslation(this.world, template.description(),
+                    "[owner]", ownerText,
+                    "[members]", memberText,
+                    "[count]", levelText,
+                    "[lifetime]", lifetimeText,
+                    "[place]", placeText).
+                replaceAll("(?m)^[ \\t]*\\r?\\n", "").
+                replaceAll("(?<!\\\\)\\|", "\n").
+                replaceAll("\\\\\\|", "|"));
+        }
+        else
+        {
+            // Now combine everything.
+            String descriptionText = this.user.getTranslation(reference + "description",
+                "[owner]", ownerText,
+                "[members]", memberText,
+                "[count]", levelText,
+                "[lifetime]", lifetimeText,
+                "[place]", placeText);
+
+            builder.description(descriptionText.
+                replaceAll("(?m)^[ \\t]*\\r?\\n", "").
+                replaceAll("(?<!\\\\)\\|", "\n").
+                replaceAll("\\\\\\|", "|"));
+        }
+    }
+    
+
+
+    /**
+     * This method is used to open UserPanel outside this class. It will be much easier to open panel with single method
+     * call then initializing new object.
+     *
+     * @param addon Level Addon object
+     * @param user User who opens panel
+     * @param world World where gui is opened
+     * @param permissionPrefix Permission Prefix
+     */
+    public static void openPanel(TopBlock addon, User user, World world, String permissionPrefix)
+    {
+        new TopLevelPanel(addon, user, world, permissionPrefix).build();
+    }
+
+// ---------------------------------------------------------------------
+// Section: Variables
+// ---------------------------------------------------------------------
+
+    /**
+     * This variable allows to access addon object.
+     */
+    private final TopBlock addon;
+
+    /**
+     * This variable holds user who opens panel. Without it panel cannot be opened.
+     */
+    private final User user;
+
+    /**
+     * This variable holds a world to which gui referee.
+     */
+    private final World world;
+
+    /**
+     * Location to icon permission.
+     */
+    private final String iconPermission;
+
+    /**
+     * List of top 10 island records.
+     */
+    private final List<TopTenData> topIslands;
+}

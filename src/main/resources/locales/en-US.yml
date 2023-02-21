@@ -1,0 +1,69 @@
+###########################################################################################
+# This is a YML file. Be careful when editing. Check your edits in a YAML checker like    #
+# the one at http://yaml-online-parser.appspot.com                                        #
+###########################################################################################
+
+island:    
+  topblock:
+    description: "show the AOneBlock Top Ten"
+    gui-title: "&a Top Ten"
+    gui-heading: "&6[name]: &B[rank]"
+    island-level: "&b Count [count]"
+  
+
+topblock:
+  gui:
+    titles:
+      top: "&0&l Top Islands"
+      detail-panel: "&0&l [name]'s island"
+      value-panel: "&0&l Block Values"
+    buttons:
+      island:
+        empty: '&f&l [name]. place'
+        name: '&f&l [name]'
+        description: |-
+          [owner]
+          [members]
+          [place]
+          [count]
+          [lifetime]
+        # Text that is replacing [name] if island do not have a name
+        owners-island: "[player]'s Island"
+        # Text for [owner] in description.
+        owner: "&7&l Owner: &r&b [player]"
+        # Title before listing members for [members] in description
+        members-title: "&7&l Members:"
+        # List each member under the title for [members] in description
+        member: "&b - [player]"
+        # Name of unknown player.
+        unknown: "unknown"
+        # Section for parsing [place]
+        place: "&7&o [number]. &r&7 place"
+        # Section for parsing [count]
+        count: "&7 Block Count: &o [number]"
+        # Section for parsing [lifetime]
+        lifetime: "&7 Lifetime Count: &o [number]"
+      # Button that is used in multi-page GUIs which allows to return to previous page.
+      previous:
+        name: "&f&l Previous Page"
+        description: |-
+          &7 Switch to [number] page
+      # Button that is used in multi-page GUIs which allows to go to next page.
+      next:
+        name: "&f&l Next Page"
+        description: |-
+          &7 Switch to [number] page
+    tips:
+      click-to-view: "&e Click &7 to view."
+      click-to-previous: "&e Click &7 to view previous page."
+      click-to-next: "&e Click &7 to view next page."
+      click-to-select: "&e Click &7 to select."
+      left-click-to-cycle-up: "&e Left Click &7 to cycle up."
+      right-click-to-cycle-down: "&e Right Click &7 to cycle down."
+      left-click-to-change: "&e Left Click &7 to edit."
+      right-click-to-clear: "&e Right Click &7 to clear."
+      click-to-asc: "&e Click &7 to sort in increasing order."
+      click-to-desc: "&e Click &7 to sort in decreasing order."
+      click-to-warp: "&e Click &7 to warp."
+      click-to-visit: "&e Click &7 to visit."
+      right-click-to-visit: "&e Right Click &7 to visit."

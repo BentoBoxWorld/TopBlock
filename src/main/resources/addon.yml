@@ -1,0 +1,17 @@
+name: TopBlock
+main: world.bentobox.topblock.TopBlock
+version: ${version}${build.number}
+icon: GRASS_BLOCK
+api-version: 1.21.0
+
+authors: tastybento
+
+depend: AOneBlock
+
+permissions:    
+  '[gamemode].intopten':
+    description: Player is in the top ten.
+    default: true
+  '[gamemode].island.topblock':
+    description: Player can use TopBlock command
+    default: true

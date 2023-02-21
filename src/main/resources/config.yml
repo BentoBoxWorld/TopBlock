@@ -1,0 +1,5 @@
+# TopBlock Configuration ${version}
+# 
+# Shorthand island counts
+# Shows large values using units, e.g., 10,345 -> 10k
+shorthand: false
