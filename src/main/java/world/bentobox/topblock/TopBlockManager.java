@@ -15,13 +15,17 @@ import java.util.stream.Stream;
 
 import org.bukkit.Bukkit;
 import org.bukkit.World;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.aoneblock.AOneBlock;
+import world.bentobox.bentobox.api.events.BentoBoxReadyEvent;
 
 
-public class TopBlockManager {
+public class TopBlockManager implements Listener {
     private static final String INTOPTEN = "intopten";
     private static final TreeMap<BigInteger, String> LEVELS;
     private static final BigInteger THOUSAND = BigInteger.valueOf(1000);
@@ -51,6 +55,11 @@ public class TopBlockManager {
 
     public TopBlockManager(TopBlock addon) {
         this.addon = addon;
+
+    }
+
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+    private void startMonitoring(BentoBoxReadyEvent e) {
         // Load the top ten from AOneBlock every so often
         Bukkit.getScheduler().runTaskTimer(addon.getPlugin(), () -> getOneBlockData(), 0, addon.getSettings().getRefreshTime() * 20 * 60);
     }
@@ -58,7 +67,7 @@ public class TopBlockManager {
     public void getOneBlockData() {
         AOneBlock ob = (AOneBlock) addon.getaOneBlock();
         topTen.clear();
-        ob.getBlockListener().getAllIslands().forEach(i -> {
+        ob.getBlockListener().getAllIslands().stream().filter(i -> i.getLifetime() > 0).forEach(i -> {
             topTen.add(new TopTenData(i.getUniqueId(), i.getBlockNumber(), i.getLifetime(), i.getPhaseName()));  
         });        
     }
