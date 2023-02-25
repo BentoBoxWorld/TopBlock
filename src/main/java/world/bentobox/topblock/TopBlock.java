@@ -1,5 +1,6 @@
 package world.bentobox.topblock;
 
+import world.bentobox.aoneblock.AOneBlock;
 import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.configuration.Config;
@@ -50,6 +51,7 @@ public class TopBlock extends Addon {
     public void onEnable() {
         // Start Manager
         manager = new TopBlockManager(this);
+        this.registerListener(manager);
 
         // Find AOneBlock
         getPlugin().getAddonsManager().getAddonByName("aoneblock")
@@ -58,15 +60,12 @@ public class TopBlock extends Addon {
         .map(GameModeAddon.class::cast).ifPresentOrElse(gm -> {
             log("TopBlock hooking into AOneBlock");
             registerCommands(gm);
-            //registerPlaceholders(gm);
             aOneBlock = gm;
         }, () -> {
             logError("Could not hook into AOneBlock. Is it loaded?");
             this.setState(State.DISABLED);
         });
     }
-
-
 
     private void registerCommands(GameModeAddon gm) {
         gm.getPlayerCommand().ifPresent(playerCmd -> {
@@ -104,8 +103,8 @@ public class TopBlock extends Addon {
         
     }
 
-    public Addon getaOneBlock() {
-        return aOneBlock;
+    public AOneBlock getaOneBlock() {
+        return (AOneBlock) aOneBlock;
     }
 
 

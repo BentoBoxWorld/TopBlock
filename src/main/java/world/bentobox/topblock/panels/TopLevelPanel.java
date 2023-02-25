@@ -161,7 +161,7 @@ public class TopLevelPanel
     private PanelItem createIslandIcon(ItemTemplateRecord template, TopTenData islandTopRecord, int index)
     {
         // Get player island.
-        Island island = addon.getIslands().getIslandById(islandTopRecord.islandId()).orElse(null);
+        Island island = islandTopRecord.island();
 
         if (island == null)
         {
@@ -283,8 +283,7 @@ public class TopLevelPanel
 
         if (island.getName() == null || island.getName().isEmpty())
         {
-            nameText = this.user.getTranslation(reference + "owners-island",
-                "[player]",
+            nameText = this.user.getTranslation(reference + "owners-island", "[player]",
                 island.getOwner() == null ?
                     this.user.getTranslation(reference + "unknown") :
                     this.addon.getPlayers().getName(island.getOwner()));
@@ -379,8 +378,7 @@ public class TopLevelPanel
         final String reference = "topblock.gui.buttons.island.";
 
         // Get Owner Name
-        String ownerText = this.user.getTranslation(reference + "owner",
-            "[player]",
+        String ownerText = this.user.getTranslation(reference + "owner", "[player]",
             island.getOwner() == null ?
                 this.user.getTranslation(reference + "unknown") :
                 this.addon.getPlayers().getName(island.getOwner()));

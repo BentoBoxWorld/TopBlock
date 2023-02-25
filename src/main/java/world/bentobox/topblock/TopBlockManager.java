@@ -23,6 +23,7 @@ import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.aoneblock.AOneBlock;
 import world.bentobox.bentobox.api.events.BentoBoxReadyEvent;
+import world.bentobox.bentobox.database.objects.Island;
 
 
 public class TopBlockManager implements Listener {
@@ -39,7 +40,7 @@ public class TopBlockManager implements Listener {
     }
     private final TopBlock addon;
 
-    public record TopTenData(String islandId, int blockNumber, long lifetime, String phaseName) implements Comparable<TopTenData> {
+    public record TopTenData(Island island, int blockNumber, long lifetime, String phaseName) implements Comparable<TopTenData> {
 
         @Override
         public int compareTo(TopTenData o) {
@@ -62,13 +63,17 @@ public class TopBlockManager implements Listener {
     private void startMonitoring(BentoBoxReadyEvent e) {
         // Load the top ten from AOneBlock every so often
         Bukkit.getScheduler().runTaskTimer(addon.getPlugin(), () -> getOneBlockData(), 0, addon.getSettings().getRefreshTime() * 20 * 60);
+        // Register placeholders after everything is loaded
+        Bukkit.getScheduler().runTaskLater(addon.getPlugin(), () -> new PlaceholderManager(addon).registerPlaceholders(addon.getaOneBlock()), 10L);
     }
 
-    public void getOneBlockData() {
+   void getOneBlockData() {
         AOneBlock ob = (AOneBlock) addon.getaOneBlock();
         topTen.clear();
         ob.getBlockListener().getAllIslands().stream().filter(i -> i.getLifetime() > 0).forEach(i -> {
-            topTen.add(new TopTenData(i.getUniqueId(), i.getBlockNumber(), i.getLifetime(), i.getPhaseName()));  
+            // Get player island.
+            Island island = addon.getIslands().getIslandById(i.getUniqueId()).orElse(null);
+            topTen.add(new TopTenData(island, i.getBlockNumber(), i.getLifetime(), i.getPhaseName()));
         });        
     }
 
@@ -134,20 +139,11 @@ public class TopBlockManager implements Listener {
     }
 
     /**
-     * Builds the top ten
-     */
-    public void loadTopTen() {
-        // TODO: Get from AOneBlock
-    }
-
-    /**
      * Removes island from top ten
      * @param uniqueId - island UUID
      */
     public void deleteIsland(@NonNull String uniqueId) {
-        topTen.removeIf(en -> en.islandId.equals(uniqueId));
-
-
+        topTen.removeIf(en -> en.island().getUniqueId().equals(uniqueId));
     }
 
 }
