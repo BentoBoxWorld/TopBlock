@@ -9,9 +9,9 @@ authors: tastybento
 depend: AOneBlock
 
 permissions:    
-  '[gamemode].intopten':
+  'aoneblock.intopten':
     description: Player is in the top ten.
     default: true
-  '[gamemode].island.topblock':
+  'aoneblock.island.topblock':
     description: Player can use TopBlock command
     default: true
