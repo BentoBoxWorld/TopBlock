@@ -13,6 +13,10 @@ Add-on for BentoBox to calculate island levels for AOneBlock specifically. Ranks
 4. Edit the config.yml how you want.
 5. Restart the server if you make a change
 
+## Commands
+
+`/ob topblock` - this shows the Top Ten
+
 ## Permissions
 Permissions are given automatically to players as listed below. If your permissions plugin strips permissions then you may have to allocate these manually. Note that if a player doesn't have the `intopten` permission, they will not be listed in the top ten.
 
