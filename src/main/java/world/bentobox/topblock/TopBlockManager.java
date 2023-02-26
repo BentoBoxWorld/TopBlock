@@ -9,12 +9,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.TreeMap;
-import java.util.UUID;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.bukkit.Bukkit;
-import org.bukkit.World;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -27,7 +23,6 @@ import world.bentobox.bentobox.database.objects.Island;
 
 
 public class TopBlockManager implements Listener {
-    private static final String INTOPTEN = "intopten";
     private static final TreeMap<BigInteger, String> LEVELS;
     private static final BigInteger THOUSAND = BigInteger.valueOf(1000);
     static {
@@ -40,6 +35,13 @@ public class TopBlockManager implements Listener {
     }
     private final TopBlock addon;
 
+    /**
+     * @param island island
+     * @param blockNumber the number of blocks mined this time around
+     * @param lifetime the lifetime number of blocks mined
+     * @param phaseName the name of the current phase
+     *
+     */
     public record TopTenData(Island island, int blockNumber, long lifetime, String phaseName) implements Comparable<TopTenData> {
 
         @Override
@@ -54,6 +56,10 @@ public class TopBlockManager implements Listener {
     private final List<TopTenData> topTen = new ArrayList<>();
 
 
+    /**
+     * Top Block Manager - provides methods to get data
+     * @param addon addon
+     */
     public TopBlockManager(TopBlock addon) {
         this.addon = addon;
 
@@ -113,37 +119,6 @@ public class TopBlockManager implements Listener {
         return topTen.stream()
                 .sorted(Collections.reverseOrder()).limit(size)
                 .toList();
-    }
-
-    /**
-     * Get the rank of the player in the rankings
-     * @param world - world
-     * @param islandId - unique ID of the island
-     * @return rank placing - note - placing of 1 means top ranked
-     */
-    public int getRank(@NonNull World world, String islandId) {
-        Stream<TopTenData> stream = topTen.stream()
-                .sorted(Collections.reverseOrder());
-        return stream.takeWhile(x -> !x.equals(islandId)).collect(Collectors.toList()).size() + 1;
-    }
-
-    /**
-     * Checks if player has the correct top ten perm to have their level saved
-     * @param world
-     * @param targetPlayer
-     * @return true if player has the perm or the player is offline
-     */
-    boolean hasTopTenPerm(@NonNull World world, @NonNull UUID targetPlayer) {
-        String permPrefix = addon.getPlugin().getIWM().getPermissionPrefix(world);
-        return Bukkit.getPlayer(targetPlayer) == null || Bukkit.getPlayer(targetPlayer).hasPermission(permPrefix + INTOPTEN);
-    }
-
-    /**
-     * Removes island from top ten
-     * @param uniqueId - island UUID
-     */
-    public void deleteIsland(@NonNull String uniqueId) {
-        topTen.removeIf(en -> en.island().getUniqueId().equals(uniqueId));
     }
 
 }

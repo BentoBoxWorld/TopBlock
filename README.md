@@ -18,9 +18,6 @@ Permissions are given automatically to players as listed below. If your permissi
 
 ```
 permissions:    
-  'aoneblock.intopten':
-    description: Player is in the top ten.
-    default: true
   'aoneblock.island.topblock':
     description: Player can use TopBlock command
     default: true
