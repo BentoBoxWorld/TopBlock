@@ -13,6 +13,7 @@ import java.util.UUID;
 import org.bukkit.Material;
 import org.bukkit.World;
 
+import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.panels.PanelItem;
 import world.bentobox.bentobox.api.panels.TemplatedPanel;
 import world.bentobox.bentobox.api.panels.builders.PanelItemBuilder;
@@ -30,9 +31,9 @@ import world.bentobox.topblock.util.Utils;
  */
 public class TopLevelPanel
 {
-// ---------------------------------------------------------------------
-// Section: Internal Constructor
-// ---------------------------------------------------------------------
+    // ---------------------------------------------------------------------
+    // Section: Internal Constructor
+    // ---------------------------------------------------------------------
 
 
     /**
@@ -76,9 +77,9 @@ public class TopLevelPanel
     }
 
 
-// ---------------------------------------------------------------------
-// Section: Methods
-// ---------------------------------------------------------------------
+    // ---------------------------------------------------------------------
+    // Section: Methods
+    // ---------------------------------------------------------------------
 
 
     /**
@@ -94,7 +95,7 @@ public class TopLevelPanel
             return null;
         }
 
-        final String reference = "topblock.gui.buttons.island.";
+
 
         PanelItemBuilder builder = new PanelItemBuilder();
 
@@ -106,18 +107,18 @@ public class TopLevelPanel
         if (template.title() != null)
         {
             builder.name(this.user.getTranslation(this.world, template.title(),
-                "[name]", String.valueOf(index)));
+                    TextVariables.NAME, String.valueOf(index)));
         }
         else
         {
-            builder.name(this.user.getTranslation(this.world, reference,
-                "[name]", String.valueOf(index)));
+            builder.name(this.user.getTranslation(this.world, REFERENCE,
+                    TextVariables.NAME, String.valueOf(index)));
         }
 
         if (template.description() != null)
         {
             builder.description(this.user.getTranslation(this.world, template.description(),
-                "[number]", String.valueOf(index)));
+                    TextVariables.NUMBER, String.valueOf(index)));
         }
 
         builder.amount(index != 0 ? (int) index : 1);
@@ -260,7 +261,7 @@ public class TopLevelPanel
             builder.description("");
             builder.description(tooltips);
         }
-    */
+         */
         return builder.build();
     }
 
@@ -272,21 +273,19 @@ public class TopLevelPanel
      * @param template the template
      * @param island the island
      */
-    private void populateIslandTitle(PanelItemBuilder builder, 
-        ItemTemplateRecord template, 
-        Island island)
+    private void populateIslandTitle(PanelItemBuilder builder,
+            ItemTemplateRecord template,
+            Island island)
     {
-        final String reference = "topblock.gui.buttons.island.";
-
         // Get Island Name
         String nameText;
 
         if (island.getName() == null || island.getName().isEmpty())
         {
-            nameText = this.user.getTranslation(reference + "owners-island", "[player]",
-                island.getOwner() == null ?
-                    this.user.getTranslation(reference + "unknown") :
-                    this.addon.getPlayers().getName(island.getOwner()));
+            nameText = this.user.getTranslation(REFERENCE + "owners-island", PLAYER,
+                    island.getOwner() == null ?
+                            this.user.getTranslation(REFERENCE + "unknown") :
+                                this.addon.getPlayers().getName(island.getOwner()));
         }
         else
         {
@@ -297,11 +296,11 @@ public class TopLevelPanel
         if (template.title() != null && !template.title().isBlank())
         {
             builder.name(this.user.getTranslation(this.world, template.title(),
-                "[name]", nameText));
+                    TextVariables.NAME, nameText));
         }
         else
         {
-            builder.name(this.user.getTranslation(reference + "name", "[name]", nameText));
+            builder.name(this.user.getTranslation(REFERENCE + "name", TextVariables.NAME, nameText));
         }
     }
 
@@ -314,11 +313,11 @@ public class TopLevelPanel
      * @param island the island
      */
     private void populateIslandIcon(PanelItemBuilder builder,
-        ItemTemplateRecord template,
-        Island island)
+            ItemTemplateRecord template,
+            Island island)
     {
         User owner = island.getOwner() == null ? null : User.getInstance(island.getOwner());
-        
+
         // Get permission or island icon
         String permissionIcon = owner == null ? null :
             Utils.getPermissionValue(owner, this.iconPermission, null);
@@ -369,19 +368,17 @@ public class TopLevelPanel
      * @param islandTopRecord the top record object
      * @param index place index.
      */
-    private void populateIslandDescription(PanelItemBuilder builder, 
-        ItemTemplateRecord template,
-        Island island, 
-        TopTenData islandTopRecord,
-        int index)
+    private void populateIslandDescription(PanelItemBuilder builder,
+            ItemTemplateRecord template,
+            Island island,
+            TopTenData islandTopRecord,
+            int index)
     {
-        final String reference = "topblock.gui.buttons.island.";
-
         // Get Owner Name
-        String ownerText = this.user.getTranslation(reference + "owner", "[player]",
-            island.getOwner() == null ?
-                this.user.getTranslation(reference + "unknown") :
-                this.addon.getPlayers().getName(island.getOwner()));
+        String ownerText = this.user.getTranslation(REFERENCE + "owner", PLAYER,
+                island.getOwner() == null ?
+                        this.user.getTranslation(REFERENCE + "unknown") :
+                            this.addon.getPlayers().getName(island.getOwner()));
 
         // Get Members Text
         String memberText;
@@ -389,11 +386,11 @@ public class TopLevelPanel
         if (island.getMemberSet().size() > 1)
         {
             StringBuilder memberBuilder = new StringBuilder(
-                this.user.getTranslationOrNothing(reference + "members-title"));
+                    this.user.getTranslationOrNothing(REFERENCE + "members-title"));
 
             for (UUID uuid : island.getMemberSet())
             {
-                User user = User.getInstance(uuid);
+                User u = User.getInstance(uuid);
 
                 if (memberBuilder.length() > 0)
                 {
@@ -401,8 +398,8 @@ public class TopLevelPanel
                 }
 
                 memberBuilder.append(
-                    this.user.getTranslationOrNothing(reference + "member",
-                        "[player]", user.getName()));
+                        this.user.getTranslationOrNothing(REFERENCE + "member",
+                                PLAYER, u.getName()));
             }
 
             memberText = memberBuilder.toString();
@@ -412,14 +409,14 @@ public class TopLevelPanel
             memberText = "";
         }
 
-        String placeText = this.user.getTranslation(reference + "place",
-            "[number]", String.valueOf(index));
+        String placeText = this.user.getTranslation(REFERENCE + "place",
+                TextVariables.NUMBER, String.valueOf(index));
 
-        String levelText = this.user.getTranslation(reference + "count",
-            "[number]", this.addon.getManager().formatLevel((long)islandTopRecord.blockNumber()));
-        
-        String lifetimeText = this.user.getTranslation(reference + "lifetime",
-                "[number]", this.addon.getManager().formatLevel(islandTopRecord.lifetime()));
+        String levelText = this.user.getTranslation(REFERENCE + "count",
+                TextVariables.NUMBER, this.addon.getManager().formatLevel((long)islandTopRecord.blockNumber()));
+
+        String lifetimeText = this.user.getTranslation(REFERENCE + "lifetime",
+                TextVariables.NUMBER, this.addon.getManager().formatLevel(islandTopRecord.lifetime()));
 
         // Template specific description is always more important than custom one.
         if (template.description() != null && !template.description().isBlank())
@@ -430,27 +427,27 @@ public class TopLevelPanel
                     "[count]", levelText,
                     "[lifetime]", lifetimeText,
                     "[place]", placeText).
-                replaceAll("(?m)^[ \\t]*\\r?\\n", "").
-                replaceAll("(?<!\\\\)\\|", "\n").
-                replaceAll("\\\\\\|", "|"));
+                    replaceAll("(?m)^[ \\t]*\\r?\\n", "").
+                    replaceAll("(?<!\\\\)\\|", "\n").
+                    replace("\\\\\\|", "|"));
         }
         else
         {
             // Now combine everything.
-            String descriptionText = this.user.getTranslation(reference + "description",
-                "[owner]", ownerText,
-                "[members]", memberText,
-                "[count]", levelText,
-                "[lifetime]", lifetimeText,
-                "[place]", placeText);
+            String descriptionText = this.user.getTranslation(REFERENCE + "description",
+                    "[owner]", ownerText,
+                    "[members]", memberText,
+                    "[count]", levelText,
+                    "[lifetime]", lifetimeText,
+                    "[place]", placeText);
 
             builder.description(descriptionText.
-                replaceAll("(?m)^[ \\t]*\\r?\\n", "").
-                replaceAll("(?<!\\\\)\\|", "\n").
-                replaceAll("\\\\\\|", "|"));
+                    replaceAll("(?m)^[ \\t]*\\r?\\n", "").
+                    replaceAll("(?<!\\\\)\\|", "\n").
+                    replace("\\\\\\|", "|"));
         }
     }
-    
+
 
 
     /**
@@ -467,9 +464,13 @@ public class TopLevelPanel
         new TopLevelPanel(addon, user, world, permissionPrefix).build();
     }
 
-// ---------------------------------------------------------------------
-// Section: Variables
-// ---------------------------------------------------------------------
+    // Constants
+    private static final String REFERENCE = "topblock.gui.buttons.island.";
+    private static final String PLAYER = "[player]";
+
+    // ---------------------------------------------------------------------
+    // Section: Variables
+    // ---------------------------------------------------------------------
 
     /**
      * This variable allows to access addon object.
