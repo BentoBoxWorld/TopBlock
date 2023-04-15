@@ -55,7 +55,7 @@ public class TopBlock extends Addon {
 
         // Find AOneBlock
         getPlugin().getAddonsManager().getAddonByName("aoneblock")
-        .filter(gm -> gm.isEnabled())
+        .filter(Addon::isEnabled)
         .filter(GameModeAddon.class::isInstance)
         .map(GameModeAddon.class::cast).ifPresentOrElse(gm -> {
             log("TopBlock hooking into AOneBlock");
@@ -68,9 +68,7 @@ public class TopBlock extends Addon {
     }
 
     private void registerCommands(GameModeAddon gm) {
-        gm.getPlayerCommand().ifPresent(playerCmd -> {
-            new TopBlockCommand(this, playerCmd);
-        });
+        gm.getPlayerCommand().ifPresent(playerCmd -> new TopBlockCommand(this, playerCmd));
     }
 
 
@@ -100,7 +98,7 @@ public class TopBlock extends Addon {
     @Override
     public void onDisable() {
         // Do nothing
-        
+
     }
 
     public AOneBlock getaOneBlock() {

@@ -36,22 +36,26 @@ public class PlaceholderManager {
         PlaceholdersManager bpm = plugin.getPlaceholdersManager();
         @NonNull List<TopTenData> rList = addon.getManager().getTopTen(TopBlock.TEN);
         // Register Top Ten Placeholders
-        for (int i = 0; i < TopBlock.TEN; i++) {            
+        for (int i = 0; i < TopBlock.TEN; i++) {
             TopTenData r = i < rList.size() ? rList.get(i) : null;
             int rank = i + 1;
-            // Name of island owner
-            bpm.registerPlaceholder(gm, "island_player_name_top_" + rank, u -> r == null ? "" : getPlayerName(r));
-            // Name of island team members
-            bpm.registerPlaceholder(gm, "island_member_names_top_" + rank, u -> r == null ? "" : getMemberNames(r));
-            // Name of the phase they have reached
-            bpm.registerPlaceholder(gm, "island_phase_name_top_" + rank, u -> r == null ? "" : r.phaseName());
-            // Phase Number
-            bpm.registerPlaceholder(gm, "island_phase_number_top_" + rank, u -> r == null ? "" : getPhaseNumber(r));
-            // Block Count
-            bpm.registerPlaceholder(gm, "island_count_top_" + rank, u -> r == null ? "" : String.valueOf(r.blockNumber()));
-            // Lifetime count
-            bpm.registerPlaceholder(gm, "island_lifetime_top_" + rank, u -> r == null ? "" : String.valueOf(r.lifetime()));
+            registerPH(bpm, gm, rank, r, i);
         }
+    }
+
+    private void registerPH(PlaceholdersManager bpm, GameModeAddon gm, int rank, TopTenData r, int i) {
+        // Name of island owner
+        bpm.registerPlaceholder(gm, "island_player_name_top_" + rank, u -> r == null ? "" : getPlayerName(r));
+        // Name of island team members
+        bpm.registerPlaceholder(gm, "island_member_names_top_" + rank, u -> r == null ? "" : getMemberNames(r));
+        // Name of the phase they have reached
+        bpm.registerPlaceholder(gm, "island_phase_name_top_" + rank, u -> r == null ? "" : r.phaseName());
+        // Phase Number
+        bpm.registerPlaceholder(gm, "island_phase_number_top_" + rank, u -> r == null ? "" : getPhaseNumber(r));
+        // Block Count
+        bpm.registerPlaceholder(gm, "island_count_top_" + rank, u -> r == null ? "" : String.valueOf(r.blockNumber()));
+        // Lifetime count
+        bpm.registerPlaceholder(gm, "island_lifetime_top_" + rank, u -> r == null ? "" : String.valueOf(r.lifetime()));
     }
 
     /**

@@ -18,9 +18,10 @@ import world.bentobox.bentobox.api.user.User;
 
 public class ConversationUtils
 {
-// ---------------------------------------------------------------------
-// Section: Conversation API implementation
-// ---------------------------------------------------------------------
+    private ConversationUtils() {}
+    // ---------------------------------------------------------------------
+    // Section: Conversation API implementation
+    // ---------------------------------------------------------------------
 
 
     /**
@@ -32,9 +33,9 @@ public class ConversationUtils
      * @param user User who is targeted with current confirmation.
      */
     public static void createStringInput(Consumer<String> consumer,
-        User user,
-        @NonNull String question,
-        @Nullable String successMessage)
+            User user,
+            @NonNull String question,
+            @Nullable String successMessage)
     {
         // Text input message.
         StringPrompt stringPrompt = new StringPrompt()
@@ -56,16 +57,16 @@ public class ConversationUtils
         };
 
         new ConversationFactory(BentoBox.getInstance()).
-            withPrefix(context -> user.getTranslation("level.conversations.prefix")).
-            withFirstPrompt(stringPrompt).
-            // On cancel conversation will be closed.
-                withLocalEcho(false).
-            withTimeout(90).
-            withEscapeSequence(user.getTranslation("level.conversations.cancel-string")).
-            // Use null value in consumer to detect if user has abandoned conversation.
-                addConversationAbandonedListener(ConversationUtils.getAbandonListener(consumer, user)).
-            buildConversation(user.getPlayer()).
-            begin();
+        withPrefix(context -> user.getTranslation("level.conversations.prefix")).
+        withFirstPrompt(stringPrompt).
+        // On cancel conversation will be closed.
+        withLocalEcho(false).
+        withTimeout(90).
+        withEscapeSequence(user.getTranslation("level.conversations.cancel-string")).
+        // Use null value in consumer to detect if user has abandoned conversation.
+        addConversationAbandonedListener(ConversationUtils.getAbandonListener(consumer, user)).
+        buildConversation(user.getPlayer()).
+        begin();
     }
 
 
@@ -111,7 +112,7 @@ public class ConversationUtils
                 consumer.accept(null);
                 // send cancell message
                 abandonedEvent.getContext().getForWhom().sendRawMessage(
-                    user.getTranslation("level.conversations.prefix") +
+                        user.getTranslation("level.conversations.prefix") +
                         user.getTranslation("level.conversations.cancelled"));
             }
         };
