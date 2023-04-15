@@ -39,11 +39,11 @@ public class PlaceholderManager {
         for (int i = 0; i < TopBlock.TEN; i++) {
             TopTenData r = i < rList.size() ? rList.get(i) : null;
             int rank = i + 1;
-            registerPH(bpm, gm, rank, r, i);
+            registerPH(bpm, gm, rank, r);
         }
     }
 
-    private void registerPH(PlaceholdersManager bpm, GameModeAddon gm, int rank, TopTenData r, int i) {
+    private void registerPH(PlaceholdersManager bpm, GameModeAddon gm, int rank, TopTenData r) {
         // Name of island owner
         bpm.registerPlaceholder(gm, "island_player_name_top_" + rank, u -> r == null ? "" : getPlayerName(r));
         // Name of island team members
