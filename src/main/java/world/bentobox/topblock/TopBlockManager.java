@@ -34,6 +34,7 @@ public class TopBlockManager implements Listener {
         LEVELS.put(THOUSAND.pow(4), "T");
     }
     private final TopBlock addon;
+    private final PlaceholderManager phm;
 
     /**
      * @param island island
@@ -62,25 +63,29 @@ public class TopBlockManager implements Listener {
      */
     public TopBlockManager(TopBlock addon) {
         this.addon = addon;
-
+        this.phm = new PlaceholderManager(addon);
     }
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     private void startMonitoring(BentoBoxReadyEvent e) {
         // Load the top ten from AOneBlock every so often
-        Bukkit.getScheduler().runTaskTimer(addon.getPlugin(), this::getOneBlockData, 0, addon.getSettings().getRefreshTime() * 20L * 60);
+        Bukkit.getScheduler().runTaskTimer(addon.getPlugin(), () -> {
+            // Update TopTen
+            getOneBlockData();
+            // Update placeholders
+            phm.updateTopTen();
+        }, 0, addon.getSettings().getRefreshTime() * 20L * 60);
         // Register placeholders after everything is loaded
-        Bukkit.getScheduler().runTaskLater(addon.getPlugin(), () -> new PlaceholderManager(addon).registerPlaceholders(addon.getaOneBlock()), 10L);
+        Bukkit.getScheduler().runTaskLater(addon.getPlugin(), () -> phm.registerPlaceholders(addon.getaOneBlock()), 10L);
     }
 
     void getOneBlockData() {
         AOneBlock ob = addon.getaOneBlock();
         topTen.clear();
-        ob.getBlockListener().getAllIslands().stream().filter(i -> i.getLifetime() > 0).forEach(i -> {
-            // Get player island.
-            Island island = addon.getIslands().getIslandById(i.getUniqueId()).orElse(null);
-            topTen.add(new TopTenData(island, i.getBlockNumber(), i.getLifetime(), i.getPhaseName()));
-        });
+        ob.getBlockListener().getAllIslands().stream().filter(i -> i.getLifetime() > 0).forEach(i ->
+        // Get player island.
+        addon.getIslands().getIslandById(i.getUniqueId()).ifPresent(island ->
+        topTen.add(new TopTenData(island, i.getBlockNumber(), i.getLifetime(), i.getPhaseName()))));
     }
 
     /**
