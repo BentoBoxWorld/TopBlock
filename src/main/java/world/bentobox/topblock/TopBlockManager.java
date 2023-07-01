@@ -69,7 +69,12 @@ public class TopBlockManager implements Listener {
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     private void startMonitoring(BentoBoxReadyEvent e) {
         // Load the top ten from AOneBlock every so often
-        Bukkit.getScheduler().runTaskTimer(addon.getPlugin(), this::getOneBlockData, 0, addon.getSettings().getRefreshTime() * 20L * 60);
+        Bukkit.getScheduler().runTaskTimer(addon.getPlugin(), () -> {
+            // Update TopTen
+            getOneBlockData();
+            // Update placeholders
+            phm.updateTopTen();
+        }, 0, addon.getSettings().getRefreshTime() * 20L * 60);
         // Register placeholders after everything is loaded
         Bukkit.getScheduler().runTaskLater(addon.getPlugin(), () -> phm.registerPlaceholders(addon.getaOneBlock()), 10L);
     }
@@ -82,8 +87,6 @@ public class TopBlockManager implements Listener {
             Island island = addon.getIslands().getIslandById(i.getUniqueId()).orElse(null);
             topTen.add(new TopTenData(island, i.getBlockNumber(), i.getLifetime(), i.getPhaseName()));
         });
-        // Update placeholders
-        phm.updateTopTen();
     }
 
     /**

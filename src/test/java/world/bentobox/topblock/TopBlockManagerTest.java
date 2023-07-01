@@ -34,12 +34,12 @@ import world.bentobox.topblock.config.ConfigSettings;
  */
 @RunWith(PowerMockRunner.class)
 public class TopBlockManagerTest {
-    
+
     @Mock
     private TopBlock addon;
     @Mock
     private Island island;
-    
+
     private TopBlockManager tbm;
     @Mock
     private AOneBlock aob;
@@ -60,7 +60,7 @@ public class TopBlockManagerTest {
         i.setBlockNumber(100);
         i.setPhaseName("phasy");
         list.add(i);
-        
+
         // Island manager
         when(addon.getIslands()).thenReturn(im);
         when(im.getIslandById(anyString())).thenReturn(Optional.of(island));
@@ -78,7 +78,7 @@ public class TopBlockManagerTest {
     public void testTopBlockManager() {
         assertNotNull(tbm);
     }
-    
+
     /**
      * Test method for {@link world.bentobox.topblock.TopBlockManager.TopTenData}.
      */
@@ -88,7 +88,7 @@ public class TopBlockManagerTest {
         TopTenData ttd2 = new TopTenData(island, 0, 0, "phase one");
         assertEquals(ttd, ttd2);
     }
-    
+
     /**
      * Test method for {@link world.bentobox.topblock.TopBlockManager.TopTenData}.
      */
@@ -98,7 +98,7 @@ public class TopBlockManagerTest {
         TopTenData ttd2 = new TopTenData(island, 0, 0, "phase one");
         assertNotEquals(ttd, ttd2);
     }
-    
+
     /**
      * Test method for {@link world.bentobox.topblock.TopBlockManager.TopTenData}.
      */
@@ -118,7 +118,7 @@ public class TopBlockManagerTest {
         TopTenData ttd2 = new TopTenData(island, 0, 0, "phase two");
         assertNotEquals(ttd, ttd2);
     }
-    
+
     /**
      * Test method for {@link world.bentobox.topblock.TopBlockManager.TopTenData}.
      */
@@ -133,7 +133,7 @@ public class TopBlockManagerTest {
         assertEquals(ttd, list.get(0));
         assertEquals(ttd2, list.get(1));
     }
-    
+
     /**
      * Test method for {@link world.bentobox.topblock.TopBlockManager.TopTenData}.
      */
@@ -148,7 +148,7 @@ public class TopBlockManagerTest {
         assertEquals(ttd2, list.get(0));
         assertEquals(ttd, list.get(1));
     }
-    
+
     /**
      * Test method for {@link world.bentobox.topblock.TopBlockManager.TopTenData}.
      */
@@ -163,7 +163,7 @@ public class TopBlockManagerTest {
         assertEquals(ttd, list.get(0));
         assertEquals(ttd2, list.get(1));
     }
-    
+
     /**
      * Test method for {@link world.bentobox.topblock.TopBlockManager.TopTenData}.
      */
@@ -178,8 +178,8 @@ public class TopBlockManagerTest {
         assertEquals(ttd, list.get(0));
         assertEquals(ttd2, list.get(1));
     }
-    
-    
+
+
     /**
      * Test method for {@link world.bentobox.topblock.TopBlockManager#getOneBlockData()}.
      */
@@ -189,9 +189,9 @@ public class TopBlockManagerTest {
         @NonNull
         List<TopTenData> list = tbm.getTopTen(10);
         TopTenData t = list.get(0);
-        assertEquals(100, t.lifetime()); 
-        assertEquals(100, t.blockNumber()); 
-        assertEquals("phasy", t.phaseName()); 
+        assertEquals(100, t.lifetime());
+        assertEquals(100, t.blockNumber());
+        assertEquals("phasy", t.phaseName());
 
     }
 
