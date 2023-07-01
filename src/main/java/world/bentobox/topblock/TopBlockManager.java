@@ -82,11 +82,10 @@ public class TopBlockManager implements Listener {
     void getOneBlockData() {
         AOneBlock ob = addon.getaOneBlock();
         topTen.clear();
-        ob.getBlockListener().getAllIslands().stream().filter(i -> i.getLifetime() > 0).forEach(i -> {
-            // Get player island.
-            Island island = addon.getIslands().getIslandById(i.getUniqueId()).orElse(null);
-            topTen.add(new TopTenData(island, i.getBlockNumber(), i.getLifetime(), i.getPhaseName()));
-        });
+        ob.getBlockListener().getAllIslands().stream().filter(i -> i.getLifetime() > 0).forEach(i ->
+        // Get player island.
+        addon.getIslands().getIslandById(i.getUniqueId()).ifPresent(island ->
+        topTen.add(new TopTenData(island, i.getBlockNumber(), i.getLifetime(), i.getPhaseName()))));
     }
 
     /**
