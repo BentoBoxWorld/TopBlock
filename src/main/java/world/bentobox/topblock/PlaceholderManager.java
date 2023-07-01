@@ -24,6 +24,8 @@ public class PlaceholderManager {
 
     private final TopBlock addon;
     private final BentoBox plugin;
+    private GameModeAddon gm;
+    private List<TopTenData> rList;
 
     public PlaceholderManager(TopBlock addon) {
         this.addon = addon;
@@ -33,17 +35,31 @@ public class PlaceholderManager {
 
     protected void registerPlaceholders(GameModeAddon gm) {
         if (plugin.getPlaceholdersManager() == null) return;
-        PlaceholdersManager bpm = plugin.getPlaceholdersManager();
-        @NonNull List<TopTenData> rList = addon.getManager().getTopTen(TopBlock.TEN);
+        this.gm = gm;
+        updateTopTen();
+        registerPlaceHolders();
+    }
+
+    /**
+     * Update the top ten
+     */
+    public void updateTopTen() {
+        rList = addon.getManager().getTopTen(TopBlock.TEN);
+    }
+
+
+    private void registerPlaceHolders() {
         // Register Top Ten Placeholders
         for (int i = 0; i < TopBlock.TEN; i++) {
             TopTenData r = i < rList.size() ? rList.get(i) : null;
             int rank = i + 1;
-            registerPH(bpm, gm, rank, r);
+            registerPH(gm, rank, r);
         }
+
     }
 
-    private void registerPH(PlaceholdersManager bpm, GameModeAddon gm, int rank, TopTenData r) {
+    private void registerPH(GameModeAddon gm, int rank, TopTenData r) {
+        PlaceholdersManager bpm = plugin.getPlaceholdersManager();
         // Name of island owner
         bpm.registerPlaceholder(gm, "island_player_name_top_" + rank, u -> r == null ? "" : getPlayerName(r));
         // Name of island team members
