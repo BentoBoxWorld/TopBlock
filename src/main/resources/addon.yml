@@ -2,7 +2,7 @@ name: TopBlock
 main: world.bentobox.topblock.TopBlock
 version: ${version}${build.number}
 icon: GRASS_BLOCK
-api-version: 1.21.0
+api-version: 2.7.1
 
 authors: tastybento
 
