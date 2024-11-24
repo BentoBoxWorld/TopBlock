@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -13,26 +14,35 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
+import org.bukkit.Server;
 import org.eclipse.jdt.annotation.NonNull;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import world.bentobox.aoneblock.AOneBlock;
 import world.bentobox.aoneblock.dataobjects.OneBlockIslands;
 import world.bentobox.aoneblock.listeners.BlockListener;
+import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.topblock.TopBlockManager.TopTenData;
 import world.bentobox.topblock.config.ConfigSettings;
+import world.bentobox.topblock.mocks.ServerMocks;
 
 /**
  * @author tastybento
  *
  */
 @RunWith(PowerMockRunner.class)
+@PrepareForTest(Bukkit.class)
 public class TopBlockManagerTest {
 
     @Mock
@@ -43,8 +53,7 @@ public class TopBlockManagerTest {
     private TopBlockManager tbm;
     @Mock
     private AOneBlock aob;
-    @Mock
-    private BlockListener bl;
+
     @Mock
     private IslandsManager im;
 
@@ -54,6 +63,11 @@ public class TopBlockManagerTest {
      */
     @Before
     public void setUp() throws Exception {
+        Server server = ServerMocks.newServer();
+
+        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
+        when(Bukkit.getServer()).thenReturn(server);
+
         List<OneBlockIslands> list = new ArrayList<>();
         OneBlockIslands i = new OneBlockIslands(UUID.randomUUID().toString());
         i.setLifetime(100);
@@ -65,10 +79,18 @@ public class TopBlockManagerTest {
         when(addon.getIslands()).thenReturn(im);
         when(im.getIslandById(anyString())).thenReturn(Optional.of(island));
         // AOneBlock
+        BlockListener bl = mock(BlockListener.class); // This class uses static initializations so if it is mocked as a field, it will spark an issue
         when(bl.getAllIslands()).thenReturn(list);
         when(aob.getBlockListener()).thenReturn(bl);
         when(addon.getaOneBlock()).thenReturn(aob);
         tbm = new TopBlockManager(addon);
+    }
+
+    @After
+    public void tearDown() {
+        ServerMocks.unsetBukkitServer();
+        User.clearUsers();
+        Mockito.framework().clearInlineMocks();
     }
 
     /**
