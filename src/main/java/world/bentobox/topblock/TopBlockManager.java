@@ -9,8 +9,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.TreeMap;
+import java.util.UUID;
 
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -67,7 +69,7 @@ public class TopBlockManager implements Listener {
     }
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
-    private void startMonitoring(BentoBoxReadyEvent e) {
+    public void onBentoBoxReady(BentoBoxReadyEvent e) {
         // Load the top ten from AOneBlock every so often
         Bukkit.getScheduler().runTaskTimer(addon.getPlugin(), () -> {
             // Update TopTen
@@ -83,9 +85,29 @@ public class TopBlockManager implements Listener {
         AOneBlock ob = addon.getaOneBlock();
         topTen.clear();
         ob.getBlockListener().getAllIslands().stream().filter(i -> i.getLifetime() > 0).forEach(i ->
-        // Get player island.
-        addon.getIslands().getIslandById(i.getUniqueId()).ifPresent(island ->
+        addon.getIslands().getIslandById(i.getUniqueId())
+                .filter(this::ownerInTopTen)
+                .ifPresent(island ->
         topTen.add(new TopTenData(island, i.getBlockNumber(), i.getLifetime(), i.getPhaseName()))));
+    }
+
+    /**
+     * Returns true if the island's owner should be listed in the top ten.
+     * Offline owners always pass — admins must remove the perm from a player
+     * who can actually log in. An online owner without the {@code <prefix>intopten}
+     * permission is excluded.
+     */
+    private boolean ownerInTopTen(Island island) {
+        UUID owner = island.getOwner();
+        if (owner == null) {
+            return false;
+        }
+        Player player = Bukkit.getPlayer(owner);
+        if (player == null) {
+            return true;
+        }
+        String permPrefix = addon.getPlugin().getIWM().getPermissionPrefix(island.getWorld());
+        return player.hasPermission(permPrefix + "intopten");
     }
 
     /**

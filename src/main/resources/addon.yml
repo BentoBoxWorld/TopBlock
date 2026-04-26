@@ -8,7 +8,10 @@ authors: tastybento
 
 depend: AOneBlock
 
-permissions:    
+permissions:
   'aoneblock.island.topblock':
     description: Player can use TopBlock command
+    default: true
+  'aoneblock.intopten':
+    description: Player's island will be listed in the top ten. Remove from admins or testers to hide them.
     default: true

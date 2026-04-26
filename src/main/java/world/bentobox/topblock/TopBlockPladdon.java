@@ -10,8 +10,14 @@ import world.bentobox.bentobox.api.addons.Pladdon;
  *
  */
 public class TopBlockPladdon extends Pladdon {
+
+    private Addon addon;
+
     @Override
     public Addon getAddon() {
-        return new TopBlock();
+        if (addon == null) {
+            addon = new TopBlock();
+        }
+        return addon;
     }
 }
