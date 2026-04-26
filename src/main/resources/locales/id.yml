@@ -1,0 +1,69 @@
+###########################################################################################
+# This is a YML file. Be careful when editing. Check your edits in a YAML checker like    #
+# the one at http://yaml-online-parser.appspot.com                                        #
+###########################################################################################
+
+island:
+  topblock:
+    description: "tampilkan Top Sepuluh AOneBlock"
+    gui-title: "&a Top Ten"
+    gui-heading: "&6[name]: &B[rank]"
+    island-level: "&b Jumlah [count]"
+
+
+topblock:
+  gui:
+    titles:
+      top: "&0&l Pulau Teratas"
+      detail-panel: "&0&l Pulau [name]"
+      value-panel: "&0&l Nilai Blok"
+    buttons:
+      island:
+        empty: '&f&l [name]. tempat'
+        name: '&f&l [name]'
+        description: |-
+          [owner]
+          [members]
+          [place]
+          [count]
+          [lifetime]
+        # Text that is replacing [name] if island do not have a name
+        owners-island: 'Pulau [player]'
+        # Text for [owner] in description.
+        owner: '&7&l Pemilik: &r&b [player]'
+        # Title before listing members for [members] in description
+        members-title: '&7&l Anggota:'
+        # List each member under the title for [members] in description
+        member: "&b - [player]"
+        # Name of unknown player.
+        unknown: "tidak diketahui"
+        # Section for parsing [place]
+        place: '&7&o [number]. &r&7 tempat'
+        # Section for parsing [count]
+        count: '&7 Jumlah Blok: &o [number]'
+        # Section for parsing [lifetime]
+        lifetime: '&7 Total Seumur Hidup: &o [number]'
+      # Button that is used in multi-page GUIs which allows to return to previous page.
+      previous:
+        name: '&f&l Halaman Sebelumnya'
+        description: |-
+          &7 Beralih ke halaman [number]
+      # Button that is used in multi-page GUIs which allows to go to next page.
+      next:
+        name: '&f&l Halaman Berikutnya'
+        description: |-
+          &7 Beralih ke halaman [number]
+    tips:
+      click-to-view: '&e Klik &7 untuk melihat.'
+      click-to-previous: '&e Klik &7 untuk melihat halaman sebelumnya.'
+      click-to-next: '&e Klik &7 untuk melihat halaman berikutnya.'
+      click-to-select: '&e Klik &7 untuk memilih.'
+      left-click-to-cycle-up: '&e Klik Kiri &7 untuk naik.'
+      right-click-to-cycle-down: '&e Klik Kanan &7 untuk turun.'
+      left-click-to-change: '&e Klik Kiri &7 untuk mengedit.'
+      right-click-to-clear: '&e Klik Kanan &7 untuk menghapus.'
+      click-to-asc: '&e Klik &7 untuk mengurutkan secara menaik.'
+      click-to-desc: '&e Klik &7 untuk mengurutkan secara menurun.'
+      click-to-warp: '&e Klik &7 untuk warp.'
+      click-to-visit: '&e Klik &7 untuk mengunjungi.'
+      right-click-to-visit: '&e Klik Kanan &7 untuk mengunjungi.'

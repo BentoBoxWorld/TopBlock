@@ -1,0 +1,69 @@
+###########################################################################################
+# This is a YML file. Be careful when editing. Check your edits in a YAML checker like    #
+# the one at http://yaml-online-parser.appspot.com                                        #
+###########################################################################################
+
+island:
+  topblock:
+    description: "mostrar el Top Diez de AOneBlock"
+    gui-title: "&a Top Ten"
+    gui-heading: "&6[name]: &B[rank]"
+    island-level: "&b Cuenta [count]"
+
+
+topblock:
+  gui:
+    titles:
+      top: "&0&l Mejores Islas"
+      detail-panel: "&0&l Isla de [name]"
+      value-panel: "&0&l Valores de Bloques"
+    buttons:
+      island:
+        empty: '&f&l [name]. lugar'
+        name: '&f&l [name]'
+        description: |-
+          [owner]
+          [members]
+          [place]
+          [count]
+          [lifetime]
+        # Text that is replacing [name] if island do not have a name
+        owners-island: 'Isla de [player]'
+        # Text for [owner] in description.
+        owner: '&7&l Propietario: &r&b [player]'
+        # Title before listing members for [members] in description
+        members-title: '&7&l Miembros:'
+        # List each member under the title for [members] in description
+        member: "&b - [player]"
+        # Name of unknown player.
+        unknown: "desconocido"
+        # Section for parsing [place]
+        place: '&7&o [number]. &r&7 lugar'
+        # Section for parsing [count]
+        count: '&7 Conteo de bloques: &o [number]'
+        # Section for parsing [lifetime]
+        lifetime: '&7 Conteo de por vida: &o [number]'
+      # Button that is used in multi-page GUIs which allows to return to previous page.
+      previous:
+        name: '&f&l Página Anterior'
+        description: |-
+          &7 Cambiar a la página [number]
+      # Button that is used in multi-page GUIs which allows to go to next page.
+      next:
+        name: '&f&l Página Siguiente'
+        description: |-
+          &7 Cambiar a la página [number]
+    tips:
+      click-to-view: '&e Clic &7 para ver.'
+      click-to-previous: '&e Clic &7 para ver la página anterior.'
+      click-to-next: '&e Clic &7 para ver la página siguiente.'
+      click-to-select: '&e Clic &7 para seleccionar.'
+      left-click-to-cycle-up: '&e Clic Izquierdo &7 para subir.'
+      right-click-to-cycle-down: '&e Clic Derecho &7 para bajar.'
+      left-click-to-change: '&e Clic Izquierdo &7 para editar.'
+      right-click-to-clear: '&e Clic Derecho &7 para limpiar.'
+      click-to-asc: '&e Clic &7 para ordenar de forma ascendente.'
+      click-to-desc: '&e Clic &7 para ordenar de forma descendente.'
+      click-to-warp: '&e Clic &7 para teletransportarse.'
+      click-to-visit: '&e Clic &7 para visitar.'
+      right-click-to-visit: '&e Clic Derecho &7 para visitar.'

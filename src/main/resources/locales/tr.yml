@@ -1,0 +1,69 @@
+###########################################################################################
+# This is a YML file. Be careful when editing. Check your edits in a YAML checker like    #
+# the one at http://yaml-online-parser.appspot.com                                        #
+###########################################################################################
+
+island:
+  topblock:
+    description: "AOneBlock İlk Onunu göster"
+    gui-title: "&a Top Ten"
+    gui-heading: "&6[name]: &B[rank]"
+    island-level: "&b Sayı [count]"
+
+
+topblock:
+  gui:
+    titles:
+      top: "&0&l En İyi Adalar"
+      detail-panel: "&0&l [name] Adası"
+      value-panel: "&0&l Blok Değerleri"
+    buttons:
+      island:
+        empty: '&f&l [name]. sıra'
+        name: '&f&l [name]'
+        description: |-
+          [owner]
+          [members]
+          [place]
+          [count]
+          [lifetime]
+        # Text that is replacing [name] if island do not have a name
+        owners-island: '[player] Adası'
+        # Text for [owner] in description.
+        owner: '&7&l Sahip: &r&b [player]'
+        # Title before listing members for [members] in description
+        members-title: '&7&l Üyeler:'
+        # List each member under the title for [members] in description
+        member: "&b - [player]"
+        # Name of unknown player.
+        unknown: "bilinmiyor"
+        # Section for parsing [place]
+        place: '&7&o [number]. &r&7 sıra'
+        # Section for parsing [count]
+        count: '&7 Blok Sayısı: &o [number]'
+        # Section for parsing [lifetime]
+        lifetime: '&7 Toplam Sayı: &o [number]'
+      # Button that is used in multi-page GUIs which allows to return to previous page.
+      previous:
+        name: '&f&l Önceki Sayfa'
+        description: |-
+          &7 [number]. sayfaya geç
+      # Button that is used in multi-page GUIs which allows to go to next page.
+      next:
+        name: '&f&l Sonraki Sayfa'
+        description: |-
+          &7 [number]. sayfaya geç
+    tips:
+      click-to-view: '&e Tıkla &7 görüntülemek için.'
+      click-to-previous: '&e Tıkla &7 önceki sayfayı görüntülemek için.'
+      click-to-next: '&e Tıkla &7 sonraki sayfayı görüntülemek için.'
+      click-to-select: '&e Tıkla &7 seçmek için.'
+      left-click-to-cycle-up: '&e Sol Tıklama &7 yukarı kaydırmak için.'
+      right-click-to-cycle-down: '&e Sağ Tıklama &7 aşağı kaydırmak için.'
+      left-click-to-change: '&e Sol Tıklama &7 düzenlemek için.'
+      right-click-to-clear: '&e Sağ Tıklama &7 temizlemek için.'
+      click-to-asc: '&e Tıkla &7 artan sıralamak için.'
+      click-to-desc: '&e Tıkla &7 azalan sıralamak için.'
+      click-to-warp: '&e Tıkla &7 ışınlanmak için.'
+      click-to-visit: '&e Tıkla &7 ziyaret etmek için.'
+      right-click-to-visit: '&e Sağ Tıklama &7 ziyaret etmek için.'

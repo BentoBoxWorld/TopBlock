@@ -50,14 +50,16 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <java.version>17</java.version>
+        <java.version>21</java.version>
         <!-- Non-minecraft related dependencies -->
-        <powermock.version>2.0.9</powermock.version>
+        <junit.version>5.10.2</junit.version>
+        <mockito.version>5.11.0</mockito.version>
+        <mock-bukkit.version>v1.21-SNAPSHOT</mock-bukkit.version>
         <!-- More visible way how to change dependency versions -->
-        <spigot.version>1.21.3-R0.1-SNAPSHOT</spigot.version>
-        <bentobox.version>2.7.1-SNAPSHOT</bentobox.version>
+        <paper.version>1.21.11-R0.1-SNAPSHOT</paper.version>
+        <bentobox.version>3.14.0-SNAPSHOT</bentobox.version>
         <!-- AOneBlock addon version -->
-        <aoneblock.version>1.12.3-SNAPSHOT</aoneblock.version>
+        <aoneblock.version>1.18.0</aoneblock.version>
         <!-- Panel Utils version -->
         <panelutils.version>1.1.0</panelutils.version>
         <!-- Revision variable removes warning about dynamic version -->
@@ -65,7 +67,7 @@
         <!-- Do not change unless you want different name for local builds. -->
         <build.number>-LOCAL</build.number>
         <!-- This allows to change between versions. -->
-        <build.version>1.1.0</build.version>
+        <build.version>2.0.0</build.version>
         <sonar.projectKey>BentoBoxWorld_TopBlock</sonar.projectKey>
         <sonar.organization>bentobox-world</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
@@ -75,7 +77,7 @@
     <profiles>
         <profile>
             <!-- ci profile is activated if exist environment variable BUILD_NUMBER. -->
-            <!-- It replaces ${build.number} that is currently '-LOCAL' with 
+            <!-- It replaces ${build.number} that is currently '-LOCAL' with
                 correct build number from JENKINS machine. -->
             <id>ci</id>
             <activation>
@@ -89,13 +91,13 @@
             </properties>
         </profile>
         <profile>
-            <!-- Master profile is activated if exist environment variable 
+            <!-- Master profile is activated if exist environment variable
                 GIT_BRANCH and its value is origin/master. -->
-            <!-- It will replace 'revision' with '${build.version}' so it 
+            <!-- It will replace 'revision' with '${build.version}' so it
                 removes '-SNAPSHOT' string at the end. -->
-            <!-- Also, as this is release build, build number can be set 
+            <!-- Also, as this is release build, build number can be set
                 to empty string. -->
-            <!-- This profile will be used only if exist environment variable 
+            <!-- This profile will be used only if exist environment variable
                 GIT_BRANCH with value origin/master. -->
             <id>master</id>
             <activation>
@@ -122,8 +124,8 @@
 
     <repositories>
         <repository>
-            <id>spigot-repo</id>
-            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots</url>
+            <id>papermc</id>
+            <url>https://repo.papermc.io/repository/maven-public/</url>
         </repository>
         <repository>
             <id>bentoboxworld</id>
@@ -134,37 +136,22 @@
             <url>https://repo.codemc.org/repository/maven-public/</url>
         </repository>
         <repository>
-            <id>codemc-public</id>
-            <url>https://repo.codemc.org/repository/maven-public/</url>
+            <id>codemc</id>
+            <url>https://repo.codemc.org/repository/maven-snapshots/</url>
+        </repository>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
         </repository>
     </repositories>
 
     <dependencies>
-        <!-- Spigot API -->
+        <!-- Paper API -->
         <dependency>
-            <groupId>org.spigotmc</groupId>
-            <artifactId>spigot-api</artifactId>
-            <version>${spigot.version}</version>
+            <groupId>io.papermc.paper</groupId>
+            <artifactId>paper-api</artifactId>
+            <version>${paper.version}</version>
             <scope>provided</scope>
-        </dependency>
-        <!-- Mockito (Unit testing) -->
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-core</artifactId>
-            <version>3.11.1</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.powermock</groupId>
-            <artifactId>powermock-module-junit4</artifactId>
-            <version>${powermock.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.powermock</groupId>
-            <artifactId>powermock-api-mockito2</artifactId>
-            <version>${powermock.version}</version>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>world.bentobox</groupId>
@@ -184,24 +171,57 @@
             <version>${panelutils.version}</version>
         </dependency>
         <!-- Static analysis -->
-        <!-- We are using Eclipse's annotations. If you're using IDEA, update 
-            your project settings to take these into account for in real time static 
+        <!-- We are using Eclipse's annotations. If you're using IDEA, update
+            your project settings to take these into account for in real time static
             analysis -->
         <dependency>
             <groupId>org.eclipse.jdt</groupId>
             <artifactId>org.eclipse.jdt.annotation</artifactId>
             <version>2.2.600</version>
         </dependency>
+        <!-- MockBukkit -->
+        <dependency>
+            <groupId>com.github.MockBukkit</groupId>
+            <artifactId>MockBukkit</artifactId>
+            <version>${mock-bukkit.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- JUnit 5 -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- Mockito -->
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>${mockito.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-junit-jupiter</artifactId>
+            <version>${mockito.version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
         <!-- By default ${revision} is ${build.version}-SNAPSHOT -->
-        <!-- If GIT_BRANCH variable is set to origin/master, then it will 
+        <!-- If GIT_BRANCH variable is set to origin/master, then it will
             be only ${build.version}. -->
 
         <!-- By default ${build.number} is -LOCAL. -->
         <!-- If the BUILD_NUMBER variable is set, then it will be -b[number]. -->
-        <!-- If GIT_BRANCH variable is set to origin/master, then it will 
+        <!-- If GIT_BRANCH variable is set to origin/master, then it will
             be the empty string. -->
         <finalName>${project.name}-${revision}${build.number}</finalName>
 
@@ -221,52 +241,51 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-clean-plugin</artifactId>
-                <version>3.1.0</version>
+                <version>3.4.1</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
-                <version>3.1.0</version>
+                <version>3.3.1</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.0</version>
+                <version>3.15.0</version>
                 <configuration>
                     <release>${java.version}</release>
+                    <fork>true</fork>
                 </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.0.0-M5</version>
+                <version>3.5.2</version>
                 <configuration>
+                    <includes>
+                        <include>**/*Test.java</include>
+                        <include>**/*Test?.java</include>
+                        <include>**/*Test??.java</include>
+                    </includes>
                     <argLine>
-                        ${argLine}
+                        @{argLine}
                         --add-opens java.base/java.lang=ALL-UNNAMED
                         --add-opens java.base/java.math=ALL-UNNAMED
                         --add-opens java.base/java.io=ALL-UNNAMED
                         --add-opens java.base/java.util=ALL-UNNAMED
-                        --add-opens
-                        java.base/java.util.stream=ALL-UNNAMED
+                        --add-opens java.base/java.util.stream=ALL-UNNAMED
                         --add-opens java.base/java.text=ALL-UNNAMED
-                        --add-opens
-                        java.base/java.util.regex=ALL-UNNAMED
-                        --add-opens
-                        java.base/java.nio.channels.spi=ALL-UNNAMED
+                        --add-opens java.base/java.util.regex=ALL-UNNAMED
+                        --add-opens java.base/java.nio.channels.spi=ALL-UNNAMED
                         --add-opens java.base/sun.nio.ch=ALL-UNNAMED
                         --add-opens java.base/java.net=ALL-UNNAMED
-                        --add-opens
-                        java.base/java.util.concurrent=ALL-UNNAMED
+                        --add-opens java.base/java.util.concurrent=ALL-UNNAMED
                         --add-opens java.base/sun.nio.fs=ALL-UNNAMED
                         --add-opens java.base/sun.nio.cs=ALL-UNNAMED
                         --add-opens java.base/java.nio.file=ALL-UNNAMED
-                        --add-opens
-                        java.base/java.nio.charset=ALL-UNNAMED
-                        --add-opens
-                        java.base/java.lang.reflect=ALL-UNNAMED
-                        --add-opens
-                        java.logging/java.util.logging=ALL-UNNAMED
+                        --add-opens java.base/java.nio.charset=ALL-UNNAMED
+                        --add-opens java.base/java.lang.reflect=ALL-UNNAMED
+                        --add-opens java.logging/java.util.logging=ALL-UNNAMED
                         --add-opens java.base/java.lang.ref=ALL-UNNAMED
                         --add-opens java.base/java.util.jar=ALL-UNNAMED
                         --add-opens java.base/java.util.zip=ALL-UNNAMED
@@ -276,17 +295,17 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>3.1.0</version>
+                <version>3.4.2</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.0.1</version>
+                <version>3.11.2</version>
                 <configuration>
                     <failOnError>false</failOnError>
                     <additionalJOption>-Xdoclint:none</additionalJOption>
                     <javadocExecutable>${java.home}/bin/javadoc</javadocExecutable>
-                    <source>16</source>
+                    <source>21</source>
                 </configuration>
                 <executions>
                     <execution>
@@ -300,7 +319,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
-                <version>3.0.1</version>
+                <version>3.3.1</version>
                 <executions>
                     <execution>
                         <id>attach-sources</id>
@@ -313,17 +332,17 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-install-plugin</artifactId>
-                <version>2.5.2</version>
+                <version>3.1.3</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-deploy-plugin</artifactId>
-                <version>2.8.2</version>
+                <version>3.1.3</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>3.3.1-SNAPSHOT</version>
+                <version>3.6.0</version>
                 <configuration>
                     <minimizeJar>true</minimizeJar>
                     <artifactSet>
@@ -355,11 +374,11 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.10</version>
+                <version>0.8.12</version>
                 <configuration>
                     <append>true</append>
                     <excludes>
-                        <!-- This is required to prevent Jacoco from adding 
+                        <!-- This is required to prevent Jacoco from adding
                             synthetic fields to a JavaBean class (causes errors in testing) -->
                         <exclude>**/*Names*</exclude>
                     </excludes>

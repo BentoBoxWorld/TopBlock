@@ -1,0 +1,69 @@
+###########################################################################################
+# This is a YML file. Be careful when editing. Check your edits in a YAML checker like    #
+# the one at http://yaml-online-parser.appspot.com                                        #
+###########################################################################################
+
+island:
+  topblock:
+    description: "hiển thị Top Mười AOneBlock"
+    gui-title: "&a Top Ten"
+    gui-heading: "&6[name]: &B[rank]"
+    island-level: "&b Đếm [count]"
+
+
+topblock:
+  gui:
+    titles:
+      top: "&0&l Đảo Hàng Đầu"
+      detail-panel: "&0&l Đảo của [name]"
+      value-panel: "&0&l Giá trị Khối"
+    buttons:
+      island:
+        empty: '&f&l [name]. vị trí'
+        name: '&f&l [name]'
+        description: |-
+          [owner]
+          [members]
+          [place]
+          [count]
+          [lifetime]
+        # Text that is replacing [name] if island do not have a name
+        owners-island: 'Đảo của [player]'
+        # Text for [owner] in description.
+        owner: '&7&l Chủ: &r&b [player]'
+        # Title before listing members for [members] in description
+        members-title: '&7&l Thành viên:'
+        # List each member under the title for [members] in description
+        member: "&b - [player]"
+        # Name of unknown player.
+        unknown: "không rõ"
+        # Section for parsing [place]
+        place: '&7&o [number]. &r&7 vị trí'
+        # Section for parsing [count]
+        count: '&7 Số Khối: &o [number]'
+        # Section for parsing [lifetime]
+        lifetime: '&7 Tổng Số Khối: &o [number]'
+      # Button that is used in multi-page GUIs which allows to return to previous page.
+      previous:
+        name: '&f&l Trang Trước'
+        description: |-
+          &7 Chuyển đến trang [number]
+      # Button that is used in multi-page GUIs which allows to go to next page.
+      next:
+        name: '&f&l Trang Tiếp'
+        description: |-
+          &7 Chuyển đến trang [number]
+    tips:
+      click-to-view: '&e Nhấp &7 để xem.'
+      click-to-previous: '&e Nhấp &7 để xem trang trước.'
+      click-to-next: '&e Nhấp &7 để xem trang tiếp theo.'
+      click-to-select: '&e Nhấp &7 để chọn.'
+      left-click-to-cycle-up: '&e Nhấp Trái &7 để cuộn lên.'
+      right-click-to-cycle-down: '&e Nhấp Phải &7 để cuộn xuống.'
+      left-click-to-change: '&e Nhấp Trái &7 để chỉnh sửa.'
+      right-click-to-clear: '&e Nhấp Phải &7 để xóa.'
+      click-to-asc: '&e Nhấp &7 để sắp xếp tăng dần.'
+      click-to-desc: '&e Nhấp &7 để sắp xếp giảm dần.'
+      click-to-warp: '&e Nhấp &7 để dịch chuyển.'
+      click-to-visit: '&e Nhấp &7 để thăm.'
+      right-click-to-visit: '&e Nhấp Phải &7 để thăm.'
