@@ -123,6 +123,9 @@ public abstract class CommonTestSetup {
         mockedBukkit.when(Bukkit::getItemFactory).thenReturn(itemFactory);
         mockedBukkit.when(Bukkit::getServer).thenReturn(server);
         mockedBukkit.when(Bukkit::getScheduler).thenReturn(sch);
+        // By default treat island owners as offline so the intopten filter
+        // does not exclude them. Tests that need an online owner can override.
+        mockedBukkit.when(() -> Bukkit.getPlayer(any(UUID.class))).thenReturn(null);
 
         // Location
         when(location.getWorld()).thenReturn(world);

@@ -18,14 +18,19 @@ Add-on for BentoBox to calculate island levels for AOneBlock specifically. Ranks
 `/ob topblock` - this shows the Top Ten
 
 ## Permissions
-Permissions are given automatically to players as listed below. If your permissions plugin strips permissions then you may have to allocate these manually. Note that if a player doesn't have the `intopten` permission, they will not be listed in the top ten.
+Permissions are given automatically to players as listed below. If your permissions plugin strips permissions then you may have to allocate these manually.
 
 ```
-permissions:    
+permissions:
   'aoneblock.island.topblock':
     description: Player can use TopBlock command
     default: true
+  'aoneblock.intopten':
+    description: Player's island will be listed in the top ten. Remove from admins or testers to hide them.
+    default: true
 ```
+
+If an island owner is **online** and does not have `aoneblock.intopten`, their island is excluded from the top ten and from placeholders. Offline owners are always included — to hide an admin or tester, remove the perm from the player who can actually log in. Removing the perm from an entire group (e.g. ops) excludes everyone in that group while online.
 
 ## Placeholders
 

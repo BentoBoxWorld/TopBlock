@@ -3,14 +3,16 @@ package world.bentobox.topblock;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -45,6 +47,8 @@ class TopBlockManagerTest extends CommonTestSetup {
         when(addon.getIslands()).thenReturn(im);
         when(aob.getBlockListener()).thenReturn(bl);
         when(im.getIslandById(anyString())).thenReturn(Optional.of(island));
+        when(island.getWorld()).thenReturn(world);
+        when(iwm.getPermissionPrefix(any())).thenReturn("aoneblock.");
 
         tbm = new TopBlockManager(addon);
     }
@@ -155,6 +159,68 @@ class TopBlockManagerTest extends CommonTestSetup {
     void testFormatLevelShorthandGiga() {
         settings.setShorthand(true);
         assertEquals("3.9G", tbm.formatLevel(3_874_130_021L));
+    }
+
+    @Test
+    void testGetOneBlockDataExcludesOnlineOwnerWithoutIntoptenPerm() {
+        Player p = org.mockito.Mockito.mock(Player.class);
+        when(p.hasPermission("aoneblock.intopten")).thenReturn(false);
+        mockedBukkit.when(() -> Bukkit.getPlayer(any(UUID.class))).thenReturn(p);
+
+        when(bl.getAllIslands()).thenReturn(List.of(
+                new OneBlockIslands(UUID.randomUUID().toString()) {{
+                    setBlockNumber(80);
+                    setLifetime(250);
+                    setPhaseName("Underground");
+                }}));
+        tbm.getOneBlockData();
+
+        assertTrue(tbm.getTopTen(10).isEmpty());
+    }
+
+    @Test
+    void testGetOneBlockDataIncludesOnlineOwnerWithIntoptenPerm() {
+        Player p = org.mockito.Mockito.mock(Player.class);
+        when(p.hasPermission("aoneblock.intopten")).thenReturn(true);
+        mockedBukkit.when(() -> Bukkit.getPlayer(any(UUID.class))).thenReturn(p);
+
+        when(bl.getAllIslands()).thenReturn(List.of(
+                new OneBlockIslands(UUID.randomUUID().toString()) {{
+                    setBlockNumber(80);
+                    setLifetime(250);
+                    setPhaseName("Underground");
+                }}));
+        tbm.getOneBlockData();
+
+        assertEquals(1, tbm.getTopTen(10).size());
+    }
+
+    @Test
+    void testGetOneBlockDataIncludesOfflineOwner() {
+        // CommonTestSetup already stubs Bukkit.getPlayer -> null
+        when(bl.getAllIslands()).thenReturn(List.of(
+                new OneBlockIslands(UUID.randomUUID().toString()) {{
+                    setBlockNumber(80);
+                    setLifetime(250);
+                    setPhaseName("Underground");
+                }}));
+        tbm.getOneBlockData();
+
+        assertEquals(1, tbm.getTopTen(10).size());
+    }
+
+    @Test
+    void testGetOneBlockDataExcludesIslandWithoutOwner() {
+        when(island.getOwner()).thenReturn(null);
+        when(bl.getAllIslands()).thenReturn(List.of(
+                new OneBlockIslands(UUID.randomUUID().toString()) {{
+                    setBlockNumber(80);
+                    setLifetime(250);
+                    setPhaseName("Underground");
+                }}));
+        tbm.getOneBlockData();
+
+        assertTrue(tbm.getTopTen(10).isEmpty());
     }
 
     @Test
