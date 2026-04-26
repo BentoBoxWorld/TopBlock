@@ -1,0 +1,66 @@
+# ######################################################################################## #
+# Это YML файл. Будьте осторожны при редактировании. Проверяйте свои правки                #
+# в YAML валидаторе, например, на http://yaml-online-parser.appspot.com                    #
+# ######################################################################################## #
+
+island:
+  topblock:
+    description: показать десять лучших по AOneBlock
+    gui-title: '<green>Десятка лучших</green>'
+    gui-heading: '<gold>[name]: <aqua>[rank]</aqua></gold>'
+    island-level: '<aqua>Количество [count]</aqua>'
+
+topblock:
+  gui:
+    titles:
+      top: '<black><bold>Топ островов</bold></black>'
+      detail-panel: '<black><bold>Остров [name]</bold></black>'
+      value-panel: '<black><bold>Ценность блоков</bold></black>'
+    buttons:
+      island:
+        empty: '<white><bold>[name]. место</bold></white>'
+        name: '<white><bold> [name]</bold></white>'
+        description: |-
+          [owner]
+          [members]
+          [place]
+          [count]
+          [lifetime]
+        # Текст, заменяющий [name], если у острова нет названия.
+        owners-island: 'Остров [player]'
+        # Текст для [owner] в описании.
+        owner: '<gray><bold>Владелец: </bold><aqua>[player]</aqua></gray>'
+        # Заголовок перед списком участников для [members] в описании.
+        members-title: '<gray><bold>Участники:</bold></gray>'
+        # Список каждого участника под заголовком для [members] в описании.
+        member: '<aqua> - [player]</aqua>'
+        # Имя неизвестного игрока.
+        unknown: неизвестно
+        # Секция для парсинга [place]
+        place: '<gray><italic>[number]. </italic>место</gray>'
+        # Секция для парсинга [count]
+        count: '<gray>Количество блоков: <italic>[number]</italic></gray>'
+        # Секция для парсинга [lifetime]
+        lifetime: '<gray>Количество за всё время: <italic>[number]</italic></gray>'
+      # Кнопка, используемая в многостраничных GUI для возврата на предыдущую страницу.
+      previous:
+        name: '<white><bold>Предыдущая страница</bold></white>'
+        description: '<gray>Переключиться на страницу [number]</gray>'
+      # Кнопка, используемая в многостраничных GUI для перехода на следующую страницу.
+      next:
+        name: '<white><bold>Следующая страница</bold></white>'
+        description: '<gray>Переключиться на страницу [number]</gray>'
+    tips:
+      click-to-view: '<gray><yellow>Нажмите </yellow>для просмотра.</gray>'
+      click-to-previous: '<gray><yellow>Нажмите </yellow>для просмотра предыдущей страницы.</gray>'
+      click-to-next: '<gray><yellow>Нажмите </yellow>для просмотра следующей страницы.</gray>'
+      click-to-select: '<gray><yellow>Нажмите </yellow>для выбора.</gray>'
+      left-click-to-cycle-up: '<gray><yellow>ЛКМ </yellow>для перебора вверх.</gray>'
+      right-click-to-cycle-down: '<gray><yellow>ПКМ </yellow>для перебора вниз.</gray>'
+      left-click-to-change: '<gray><yellow>ЛКМ </yellow>для редактирования.</gray>'
+      right-click-to-clear: '<gray><yellow>ПКМ </yellow>для очистки.</gray>'
+      click-to-asc: '<gray><yellow>Нажмите </yellow>для сортировки по возрастанию.</gray>'
+      click-to-desc: '<gray><yellow>Нажмите </yellow>для сортировки по убыванию.</gray>'
+      click-to-warp: '<gray><yellow>Нажмите </yellow>для телепортации.</gray>'
+      click-to-visit: '<gray><yellow>Нажмите </yellow>для посещения.</gray>'
+      right-click-to-visit: '<gray><yellow>ПКМ </yellow>для посещения.</gray>'
