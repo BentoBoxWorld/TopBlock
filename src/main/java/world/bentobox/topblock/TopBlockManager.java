@@ -67,7 +67,7 @@ public class TopBlockManager implements Listener {
     }
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
-    private void startMonitoring(BentoBoxReadyEvent e) {
+    public void onBentoBoxReady(BentoBoxReadyEvent e) {
         // Load the top ten from AOneBlock every so often
         Bukkit.getScheduler().runTaskTimer(addon.getPlugin(), () -> {
             // Update TopTen
