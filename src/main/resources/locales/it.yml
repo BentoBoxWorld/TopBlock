@@ -1,0 +1,69 @@
+###########################################################################################
+# This is a YML file. Be careful when editing. Check your edits in a YAML checker like    #
+# the one at http://yaml-online-parser.appspot.com                                        #
+###########################################################################################
+
+island:
+  topblock:
+    description: "mostra la Top Dieci di AOneBlock"
+    gui-title: "&a Top Ten"
+    gui-heading: "&6[name]: &B[rank]"
+    island-level: "&b Conteggio [count]"
+
+
+topblock:
+  gui:
+    titles:
+      top: "&0&l Isole Migliori"
+      detail-panel: "&0&l Isola di [name]"
+      value-panel: "&0&l Valori dei Blocchi"
+    buttons:
+      island:
+        empty: '&f&l [name]. posto'
+        name: '&f&l [name]'
+        description: |-
+          [owner]
+          [members]
+          [place]
+          [count]
+          [lifetime]
+        # Text that is replacing [name] if island do not have a name
+        owners-island: 'Isola di [player]'
+        # Text for [owner] in description.
+        owner: '&7&l Proprietario: &r&b [player]'
+        # Title before listing members for [members] in description
+        members-title: '&7&l Membri:'
+        # List each member under the title for [members] in description
+        member: "&b - [player]"
+        # Name of unknown player.
+        unknown: "sconosciuto"
+        # Section for parsing [place]
+        place: '&7&o [number]. &r&7 posto'
+        # Section for parsing [count]
+        count: '&7 Conteggio Blocchi: &o [number]'
+        # Section for parsing [lifetime]
+        lifetime: '&7 Conteggio Totale: &o [number]'
+      # Button that is used in multi-page GUIs which allows to return to previous page.
+      previous:
+        name: '&f&l Pagina Precedente'
+        description: |-
+          &7 Passa alla pagina [number]
+      # Button that is used in multi-page GUIs which allows to go to next page.
+      next:
+        name: '&f&l Pagina Successiva'
+        description: |-
+          &7 Passa alla pagina [number]
+    tips:
+      click-to-view: '&e Clicca &7 per visualizzare.'
+      click-to-previous: '&e Clicca &7 per la pagina precedente.'
+      click-to-next: '&e Clicca &7 per la pagina successiva.'
+      click-to-select: '&e Clicca &7 per selezionare.'
+      left-click-to-cycle-up: '&e Clic Sinistro &7 per scorrere su.'
+      right-click-to-cycle-down: '&e Clic Destro &7 per scorrere giù.'
+      left-click-to-change: '&e Clic Sinistro &7 per modificare.'
+      right-click-to-clear: '&e Clic Destro &7 per cancellare.'
+      click-to-asc: '&e Clicca &7 per ordinare in modo crescente.'
+      click-to-desc: '&e Clicca &7 per ordinare in modo decrescente.'
+      click-to-warp: '&e Clicca &7 per teletrasportarti.'
+      click-to-visit: '&e Clicca &7 per visitare.'
+      right-click-to-visit: '&e Clic Destro &7 per visitare.'

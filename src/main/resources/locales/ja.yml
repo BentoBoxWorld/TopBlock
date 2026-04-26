@@ -1,0 +1,69 @@
+###########################################################################################
+# This is a YML file. Be careful when editing. Check your edits in a YAML checker like    #
+# the one at http://yaml-online-parser.appspot.com                                        #
+###########################################################################################
+
+island:
+  topblock:
+    description: "AOneBlockのトップテンを表示"
+    gui-title: "&a Top Ten"
+    gui-heading: "&6[name]: &B[rank]"
+    island-level: "&b カウント [count]"
+
+
+topblock:
+  gui:
+    titles:
+      top: "&0&l トップアイランド"
+      detail-panel: "&0&l [name]の島"
+      value-panel: "&0&l ブロック値"
+    buttons:
+      island:
+        empty: '&f&l [name]. 位'
+        name: '&f&l [name]'
+        description: |-
+          [owner]
+          [members]
+          [place]
+          [count]
+          [lifetime]
+        # Text that is replacing [name] if island do not have a name
+        owners-island: '[player]の島'
+        # Text for [owner] in description.
+        owner: '&7&l オーナー: &r&b [player]'
+        # Title before listing members for [members] in description
+        members-title: '&7&l メンバー:'
+        # List each member under the title for [members] in description
+        member: "&b - [player]"
+        # Name of unknown player.
+        unknown: "不明"
+        # Section for parsing [place]
+        place: '&7&o [number]. &r&7 位'
+        # Section for parsing [count]
+        count: '&7 ブロック数: &o [number]'
+        # Section for parsing [lifetime]
+        lifetime: '&7 累計ブロック数: &o [number]'
+      # Button that is used in multi-page GUIs which allows to return to previous page.
+      previous:
+        name: '&f&l 前のページ'
+        description: |-
+          &7 [number]ページに移動
+      # Button that is used in multi-page GUIs which allows to go to next page.
+      next:
+        name: '&f&l 次のページ'
+        description: |-
+          &7 [number]ページに移動
+    tips:
+      click-to-view: '&e クリック &7 して見る。'
+      click-to-previous: '&e クリック &7 して前のページを見る。'
+      click-to-next: '&e クリック &7 して次のページを見る。'
+      click-to-select: '&e クリック &7 して選択。'
+      left-click-to-cycle-up: '&e 左クリック &7 して上に移動。'
+      right-click-to-cycle-down: '&e 右クリック &7 して下に移動。'
+      left-click-to-change: '&e 左クリック &7 して編集。'
+      right-click-to-clear: '&e 右クリック &7 してクリア。'
+      click-to-asc: '&e クリック &7 して昇順に並べ替え。'
+      click-to-desc: '&e クリック &7 して降順に並べ替え。'
+      click-to-warp: '&e クリック &7 してワープ。'
+      click-to-visit: '&e クリック &7 して訪問。'
+      right-click-to-visit: '&e 右クリック &7 して訪問。'

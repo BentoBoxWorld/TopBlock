@@ -1,0 +1,69 @@
+###########################################################################################
+# This is a YML file. Be careful when editing. Check your edits in a YAML checker like    #
+# the one at http://yaml-online-parser.appspot.com                                        #
+###########################################################################################
+
+island:
+  topblock:
+    description: "показати ТОП Десять AOneBlock"
+    gui-title: "&a Top Ten"
+    gui-heading: "&6[name]: &B[rank]"
+    island-level: "&b Кількість [count]"
+
+
+topblock:
+  gui:
+    titles:
+      top: "&0&l Кращі острови"
+      detail-panel: "&0&l Острів [name]"
+      value-panel: "&0&l Цінності блоків"
+    buttons:
+      island:
+        empty: '&f&l [name]. місце'
+        name: '&f&l [name]'
+        description: |-
+          [owner]
+          [members]
+          [place]
+          [count]
+          [lifetime]
+        # Text that is replacing [name] if island do not have a name
+        owners-island: 'Острів [player]'
+        # Text for [owner] in description.
+        owner: '&7&l Власник: &r&b [player]'
+        # Title before listing members for [members] in description
+        members-title: '&7&l Учасники:'
+        # List each member under the title for [members] in description
+        member: "&b - [player]"
+        # Name of unknown player.
+        unknown: "невідомо"
+        # Section for parsing [place]
+        place: '&7&o [number]. &r&7 місце'
+        # Section for parsing [count]
+        count: '&7 Кількість блоків: &o [number]'
+        # Section for parsing [lifetime]
+        lifetime: '&7 Загальна кількість: &o [number]'
+      # Button that is used in multi-page GUIs which allows to return to previous page.
+      previous:
+        name: '&f&l Попередня сторінка'
+        description: |-
+          &7 Перейти на сторінку [number]
+      # Button that is used in multi-page GUIs which allows to go to next page.
+      next:
+        name: '&f&l Наступна сторінка'
+        description: |-
+          &7 Перейти на сторінку [number]
+    tips:
+      click-to-view: '&e Клікніть &7 щоб переглянути.'
+      click-to-previous: '&e Клікніть &7 щоб переглянути попередню сторінку.'
+      click-to-next: '&e Клікніть &7 щоб переглянути наступну сторінку.'
+      click-to-select: '&e Клікніть &7 щоб вибрати.'
+      left-click-to-cycle-up: '&e Лівий клік &7 прокрутити вгору.'
+      right-click-to-cycle-down: '&e Правий клік &7 прокрутити вниз.'
+      left-click-to-change: '&e Лівий клік &7 для редагування.'
+      right-click-to-clear: '&e Правий клік &7 щоб очистити.'
+      click-to-asc: '&e Клікніть &7 щоб сортувати за зростанням.'
+      click-to-desc: '&e Клікніть &7 щоб сортувати за спаданням.'
+      click-to-warp: '&e Клікніть &7 для телепортації.'
+      click-to-visit: '&e Клікніть &7 щоб відвідати.'
+      right-click-to-visit: '&e Правий клік &7 щоб відвідати.'

@@ -1,0 +1,69 @@
+###########################################################################################
+# This is a YML file. Be careful when editing. Check your edits in a YAML checker like    #
+# the one at http://yaml-online-parser.appspot.com                                        #
+###########################################################################################
+
+island:
+  topblock:
+    description: "AOneBlock Top Zehn anzeigen"
+    gui-title: "&a Top Ten"
+    gui-heading: "&6[name]: &B[rank]"
+    island-level: "&b Anzahl [count]"
+
+
+topblock:
+  gui:
+    titles:
+      top: "&0&l Top-Inseln"
+      detail-panel: "&0&l Insel von [name]"
+      value-panel: "&0&l Blockwerte"
+    buttons:
+      island:
+        empty: '&f&l [name]. Platz'
+        name: '&f&l [name]'
+        description: |-
+          [owner]
+          [members]
+          [place]
+          [count]
+          [lifetime]
+        # Text that is replacing [name] if island do not have a name
+        owners-island: 'Insel von [player]'
+        # Text for [owner] in description.
+        owner: '&7&l Besitzer: &r&b [player]'
+        # Title before listing members for [members] in description
+        members-title: '&7&l Mitglieder:'
+        # List each member under the title for [members] in description
+        member: "&b - [player]"
+        # Name of unknown player.
+        unknown: "unbekannt"
+        # Section for parsing [place]
+        place: '&7&o [number]. &r&7 Platz'
+        # Section for parsing [count]
+        count: '&7 Blockanzahl: &o [number]'
+        # Section for parsing [lifetime]
+        lifetime: '&7 Gesamtanzahl: &o [number]'
+      # Button that is used in multi-page GUIs which allows to return to previous page.
+      previous:
+        name: '&f&l Vorherige Seite'
+        description: |-
+          &7 Zu Seite [number] wechseln
+      # Button that is used in multi-page GUIs which allows to go to next page.
+      next:
+        name: '&f&l Nächste Seite'
+        description: |-
+          &7 Zu Seite [number] wechseln
+    tips:
+      click-to-view: '&e Klicken &7 zum Ansehen.'
+      click-to-previous: '&e Klicken &7 für die vorherige Seite.'
+      click-to-next: '&e Klicken &7 für die nächste Seite.'
+      click-to-select: '&e Klicken &7 zum Auswählen.'
+      left-click-to-cycle-up: '&e Linksklick &7 zum Hochzählen.'
+      right-click-to-cycle-down: '&e Rechtsklick &7 zum Herunterzählen.'
+      left-click-to-change: '&e Linksklick &7 zum Bearbeiten.'
+      right-click-to-clear: '&e Rechtsklick &7 zum Löschen.'
+      click-to-asc: '&e Klicken &7 für aufsteigende Sortierung.'
+      click-to-desc: '&e Klicken &7 für absteigende Sortierung.'
+      click-to-warp: '&e Klicken &7 zum Warpen.'
+      click-to-visit: '&e Klicken &7 zum Besuchen.'
+      right-click-to-visit: '&e Rechtsklick &7 zum Besuchen.'

@@ -1,0 +1,69 @@
+###########################################################################################
+# This is a YML file. Be careful when editing. Check your edits in a YAML checker like    #
+# the one at http://yaml-online-parser.appspot.com                                        #
+###########################################################################################
+
+island:
+  topblock:
+    description: "toon de AOneBlock Top Tien"
+    gui-title: "&a Top Ten"
+    gui-heading: "&6[name]: &B[rank]"
+    island-level: "&b Aantal [count]"
+
+
+topblock:
+  gui:
+    titles:
+      top: "&0&l Top Eilanden"
+      detail-panel: "&0&l Eiland van [name]"
+      value-panel: "&0&l Blokwaarden"
+    buttons:
+      island:
+        empty: '&f&l [name]. plaats'
+        name: '&f&l [name]'
+        description: |-
+          [owner]
+          [members]
+          [place]
+          [count]
+          [lifetime]
+        # Text that is replacing [name] if island do not have a name
+        owners-island: 'Eiland van [player]'
+        # Text for [owner] in description.
+        owner: '&7&l Eigenaar: &r&b [player]'
+        # Title before listing members for [members] in description
+        members-title: '&7&l Leden:'
+        # List each member under the title for [members] in description
+        member: "&b - [player]"
+        # Name of unknown player.
+        unknown: "onbekend"
+        # Section for parsing [place]
+        place: '&7&o [number]. &r&7 plaats'
+        # Section for parsing [count]
+        count: '&7 Bloktelling: &o [number]'
+        # Section for parsing [lifetime]
+        lifetime: '&7 Levenslange Telling: &o [number]'
+      # Button that is used in multi-page GUIs which allows to return to previous page.
+      previous:
+        name: '&f&l Vorige Pagina'
+        description: |-
+          &7 Naar pagina [number] gaan
+      # Button that is used in multi-page GUIs which allows to go to next page.
+      next:
+        name: '&f&l Volgende Pagina'
+        description: |-
+          &7 Naar pagina [number] gaan
+    tips:
+      click-to-view: '&e Klik &7 om te bekijken.'
+      click-to-previous: '&e Klik &7 voor de vorige pagina.'
+      click-to-next: '&e Klik &7 voor de volgende pagina.'
+      click-to-select: '&e Klik &7 om te selecteren.'
+      left-click-to-cycle-up: '&e Linkermuisknop &7 om omhoog te bladeren.'
+      right-click-to-cycle-down: '&e Rechtermuisknop &7 om omlaag te bladeren.'
+      left-click-to-change: '&e Linkermuisknop &7 om te bewerken.'
+      right-click-to-clear: '&e Rechtermuisknop &7 om te wissen.'
+      click-to-asc: '&e Klik &7 om oplopend te sorteren.'
+      click-to-desc: '&e Klik &7 om aflopend te sorteren.'
+      click-to-warp: '&e Klik &7 om te warpen.'
+      click-to-visit: '&e Klik &7 om te bezoeken.'
+      right-click-to-visit: '&e Rechtermuisknop &7 om te bezoeken.'

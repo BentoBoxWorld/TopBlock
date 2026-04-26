@@ -1,0 +1,69 @@
+###########################################################################################
+# This is a YML file. Be careful when editing. Check your edits in a YAML checker like    #
+# the one at http://yaml-online-parser.appspot.com                                        #
+###########################################################################################
+
+island:
+  topblock:
+    description: "zobrazit Top Deset AOneBlock"
+    gui-title: "&a Top Ten"
+    gui-heading: "&6[name]: &B[rank]"
+    island-level: "&b Počet [count]"
+
+
+topblock:
+  gui:
+    titles:
+      top: "&0&l Nejlepší ostrovy"
+      detail-panel: "&0&l Ostrov hráče [name]"
+      value-panel: "&0&l Hodnoty bloků"
+    buttons:
+      island:
+        empty: '&f&l [name]. místo'
+        name: '&f&l [name]'
+        description: |-
+          [owner]
+          [members]
+          [place]
+          [count]
+          [lifetime]
+        # Text that is replacing [name] if island do not have a name
+        owners-island: 'Ostrov hráče [player]'
+        # Text for [owner] in description.
+        owner: '&7&l Vlastník: &r&b [player]'
+        # Title before listing members for [members] in description
+        members-title: '&7&l Členové:'
+        # List each member under the title for [members] in description
+        member: "&b - [player]"
+        # Name of unknown player.
+        unknown: "neznámý"
+        # Section for parsing [place]
+        place: '&7&o [number]. &r&7 místo'
+        # Section for parsing [count]
+        count: '&7 Počet bloků: &o [number]'
+        # Section for parsing [lifetime]
+        lifetime: '&7 Celkový počet bloků: &o [number]'
+      # Button that is used in multi-page GUIs which allows to return to previous page.
+      previous:
+        name: '&f&l Předchozí strana'
+        description: |-
+          &7 Přejít na stránku [number]
+      # Button that is used in multi-page GUIs which allows to go to next page.
+      next:
+        name: '&f&l Další strana'
+        description: |-
+          &7 Přejít na stránku [number]
+    tips:
+      click-to-view: '&e Klikni &7 pro zobrazení.'
+      click-to-previous: '&e Klikni &7 pro zobrazení předchozí stránky.'
+      click-to-next: '&e Klikni &7 pro zobrazení další stránky.'
+      click-to-select: '&e Klikni &7 pro výběr.'
+      left-click-to-cycle-up: '&e Levý klik &7 pro posun nahoru.'
+      right-click-to-cycle-down: '&e Pravý klik &7 pro posun dolů.'
+      left-click-to-change: '&e Levý klik &7 pro úpravu.'
+      right-click-to-clear: '&e Pravý klik &7 pro vymazání.'
+      click-to-asc: '&e Klikni &7 pro řazení vzestupně.'
+      click-to-desc: '&e Klikni &7 pro řazení sestupně.'
+      click-to-warp: '&e Klikni &7 pro teleportaci.'
+      click-to-visit: '&e Klikni &7 pro návštěvu.'
+      right-click-to-visit: '&e Pravý klik &7 pro návštěvu.'

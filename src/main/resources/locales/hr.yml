@@ -1,0 +1,69 @@
+###########################################################################################
+# This is a YML file. Be careful when editing. Check your edits in a YAML checker like    #
+# the one at http://yaml-online-parser.appspot.com                                        #
+###########################################################################################
+
+island:
+  topblock:
+    description: "prikazati AOneBlock Top Deset"
+    gui-title: "&a Top Ten"
+    gui-heading: "&6[name]: &B[rank]"
+    island-level: "&b Broj [count]"
+
+
+topblock:
+  gui:
+    titles:
+      top: "&0&l Vrhunski Otoci"
+      detail-panel: "&0&l Otok igrača [name]"
+      value-panel: "&0&l Vrijednosti blokova"
+    buttons:
+      island:
+        empty: '&f&l [name]. mjesto'
+        name: '&f&l [name]'
+        description: |-
+          [owner]
+          [members]
+          [place]
+          [count]
+          [lifetime]
+        # Text that is replacing [name] if island do not have a name
+        owners-island: 'Otok igrača [player]'
+        # Text for [owner] in description.
+        owner: '&7&l Vlasnik: &r&b [player]'
+        # Title before listing members for [members] in description
+        members-title: '&7&l Članovi:'
+        # List each member under the title for [members] in description
+        member: "&b - [player]"
+        # Name of unknown player.
+        unknown: "nepoznat"
+        # Section for parsing [place]
+        place: '&7&o [number]. &r&7 mjesto'
+        # Section for parsing [count]
+        count: '&7 Broj blokova: &o [number]'
+        # Section for parsing [lifetime]
+        lifetime: '&7 Ukupan broj blokova: &o [number]'
+      # Button that is used in multi-page GUIs which allows to return to previous page.
+      previous:
+        name: '&f&l Prethodna Stranica'
+        description: |-
+          &7 Prebaci na stranicu [number]
+      # Button that is used in multi-page GUIs which allows to go to next page.
+      next:
+        name: '&f&l Sljedeća Stranica'
+        description: |-
+          &7 Prebaci na stranicu [number]
+    tips:
+      click-to-view: '&e Klikni &7 za pregled.'
+      click-to-previous: '&e Klikni &7 za prethodnu stranicu.'
+      click-to-next: '&e Klikni &7 za sljedeću stranicu.'
+      click-to-select: '&e Klikni &7 za odabir.'
+      left-click-to-cycle-up: '&e Lijevi klik &7 za pomicanje gore.'
+      right-click-to-cycle-down: '&e Desni klik &7 za pomicanje dolje.'
+      left-click-to-change: '&e Lijevi klik &7 za uređivanje.'
+      right-click-to-clear: '&e Desni klik &7 za brisanje.'
+      click-to-asc: '&e Klikni &7 za sortiranje uzlazno.'
+      click-to-desc: '&e Klikni &7 za sortiranje silazno.'
+      click-to-warp: '&e Klikni &7 za teleportaciju.'
+      click-to-visit: '&e Klikni &7 za posjetu.'
+      right-click-to-visit: '&e Desni klik &7 za posjetu.'

@@ -1,0 +1,69 @@
+###########################################################################################
+# This is a YML file. Be careful when editing. Check your edits in a YAML checker like    #
+# the one at http://yaml-online-parser.appspot.com                                        #
+###########################################################################################
+
+island:
+  topblock:
+    description: "显示AOneBlock前十名"
+    gui-title: "&a Top Ten"
+    gui-heading: "&6[name]: &B[rank]"
+    island-level: "&b 计数 [count]"
+
+
+topblock:
+  gui:
+    titles:
+      top: "&0&l 顶级岛屿"
+      detail-panel: "&0&l [name]的岛屿"
+      value-panel: "&0&l 方块价值"
+    buttons:
+      island:
+        empty: '&f&l 第[name]名'
+        name: '&f&l [name]'
+        description: |-
+          [owner]
+          [members]
+          [place]
+          [count]
+          [lifetime]
+        # Text that is replacing [name] if island do not have a name
+        owners-island: '[player]的岛'
+        # Text for [owner] in description.
+        owner: '&7&l 拥有者: &r&b [player]'
+        # Title before listing members for [members] in description
+        members-title: '&7&l 成员:'
+        # List each member under the title for [members] in description
+        member: "&b - [player]"
+        # Name of unknown player.
+        unknown: "未知"
+        # Section for parsing [place]
+        place: '&7&o 第[number]名 &r&7'
+        # Section for parsing [count]
+        count: '&7 方块数: &o [number]'
+        # Section for parsing [lifetime]
+        lifetime: '&7 累计方块数: &o [number]'
+      # Button that is used in multi-page GUIs which allows to return to previous page.
+      previous:
+        name: '&f&l 上一页'
+        description: |-
+          &7 切换到第[number]页
+      # Button that is used in multi-page GUIs which allows to go to next page.
+      next:
+        name: '&f&l 下一页'
+        description: |-
+          &7 切换到第[number]页
+    tips:
+      click-to-view: '&e 点击 &7 查看。'
+      click-to-previous: '&e 点击 &7 查看上一页。'
+      click-to-next: '&e 点击 &7 查看下一页。'
+      click-to-select: '&e 点击 &7 选择。'
+      left-click-to-cycle-up: '&e 左键点击 &7 向上翻。'
+      right-click-to-cycle-down: '&e 右键点击 &7 向下翻。'
+      left-click-to-change: '&e 左键点击 &7 编辑。'
+      right-click-to-clear: '&e 右键点击 &7 清除。'
+      click-to-asc: '&e 点击 &7 按升序排序。'
+      click-to-desc: '&e 点击 &7 按降序排序。'
+      click-to-warp: '&e 点击 &7 传送。'
+      click-to-visit: '&e 点击 &7 访问。'
+      right-click-to-visit: '&e 右键点击 &7 访问。'

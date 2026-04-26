@@ -1,0 +1,69 @@
+###########################################################################################
+# This is a YML file. Be careful when editing. Check your edits in a YAML checker like    #
+# the one at http://yaml-online-parser.appspot.com                                        #
+###########################################################################################
+
+island:
+  topblock:
+    description: "az AOneBlock Top Tíz megjelenítése"
+    gui-title: "&a Top Ten"
+    gui-heading: "&6[name]: &B[rank]"
+    island-level: "&b Szám [count]"
+
+
+topblock:
+  gui:
+    titles:
+      top: "&0&l Top Szigetek"
+      detail-panel: "&0&l [name] szigete"
+      value-panel: "&0&l Blokk értékek"
+    buttons:
+      island:
+        empty: '&f&l [name]. hely'
+        name: '&f&l [name]'
+        description: |-
+          [owner]
+          [members]
+          [place]
+          [count]
+          [lifetime]
+        # Text that is replacing [name] if island do not have a name
+        owners-island: '[player] szigete'
+        # Text for [owner] in description.
+        owner: '&7&l Tulajdonos: &r&b [player]'
+        # Title before listing members for [members] in description
+        members-title: '&7&l Tagok:'
+        # List each member under the title for [members] in description
+        member: "&b - [player]"
+        # Name of unknown player.
+        unknown: "ismeretlen"
+        # Section for parsing [place]
+        place: '&7&o [number]. &r&7 hely'
+        # Section for parsing [count]
+        count: '&7 Blokk szám: &o [number]'
+        # Section for parsing [lifetime]
+        lifetime: '&7 Élettartam számlálás: &o [number]'
+      # Button that is used in multi-page GUIs which allows to return to previous page.
+      previous:
+        name: '&f&l Előző Oldal'
+        description: |-
+          &7 Ugrás a(z) [number]. oldalra
+      # Button that is used in multi-page GUIs which allows to go to next page.
+      next:
+        name: '&f&l Következő Oldal'
+        description: |-
+          &7 Ugrás a(z) [number]. oldalra
+    tips:
+      click-to-view: '&e Kattints &7 a megtekintéshez.'
+      click-to-previous: '&e Kattints &7 az előző oldal megtekintéséhez.'
+      click-to-next: '&e Kattints &7 a következő oldal megtekintéséhez.'
+      click-to-select: '&e Kattints &7 a kiválasztáshoz.'
+      left-click-to-cycle-up: '&e Bal kattintás &7 a felfelé léptetéshez.'
+      right-click-to-cycle-down: '&e Jobb kattintás &7 a lefelé léptetéshez.'
+      left-click-to-change: '&e Bal kattintás &7 a szerkesztéshez.'
+      right-click-to-clear: '&e Jobb kattintás &7 a törléshez.'
+      click-to-asc: '&e Kattints &7 a növekvő sorrendhez.'
+      click-to-desc: '&e Kattints &7 a csökkenő sorrendhez.'
+      click-to-warp: '&e Kattints &7 a teleportáláshoz.'
+      click-to-visit: '&e Kattints &7 a látogatáshoz.'
+      right-click-to-visit: '&e Jobb kattintás &7 a látogatáshoz.'

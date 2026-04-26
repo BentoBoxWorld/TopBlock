@@ -1,0 +1,69 @@
+###########################################################################################
+# This is a YML file. Be careful when editing. Check your edits in a YAML checker like    #
+# the one at http://yaml-online-parser.appspot.com                                        #
+###########################################################################################
+
+island:
+  topblock:
+    description: "afișează Top Zece AOneBlock"
+    gui-title: "&a Top Ten"
+    gui-heading: "&6[name]: &B[rank]"
+    island-level: "&b Număr [count]"
+
+
+topblock:
+  gui:
+    titles:
+      top: "&0&l Insule de Top"
+      detail-panel: "&0&l Insula lui [name]"
+      value-panel: "&0&l Valori Blocuri"
+    buttons:
+      island:
+        empty: '&f&l [name]. loc'
+        name: '&f&l [name]'
+        description: |-
+          [owner]
+          [members]
+          [place]
+          [count]
+          [lifetime]
+        # Text that is replacing [name] if island do not have a name
+        owners-island: 'Insula lui [player]'
+        # Text for [owner] in description.
+        owner: '&7&l Proprietar: &r&b [player]'
+        # Title before listing members for [members] in description
+        members-title: '&7&l Membri:'
+        # List each member under the title for [members] in description
+        member: "&b - [player]"
+        # Name of unknown player.
+        unknown: "necunoscut"
+        # Section for parsing [place]
+        place: '&7&o [number]. &r&7 loc'
+        # Section for parsing [count]
+        count: '&7 Număr Blocuri: &o [number]'
+        # Section for parsing [lifetime]
+        lifetime: '&7 Total Blocuri: &o [number]'
+      # Button that is used in multi-page GUIs which allows to return to previous page.
+      previous:
+        name: '&f&l Pagina Anterioară'
+        description: |-
+          &7 Mergi la pagina [number]
+      # Button that is used in multi-page GUIs which allows to go to next page.
+      next:
+        name: '&f&l Pagina Următoare'
+        description: |-
+          &7 Mergi la pagina [number]
+    tips:
+      click-to-view: '&e Click &7 pentru a vizualiza.'
+      click-to-previous: '&e Click &7 pentru pagina anterioară.'
+      click-to-next: '&e Click &7 pentru pagina următoare.'
+      click-to-select: '&e Click &7 pentru a selecta.'
+      left-click-to-cycle-up: '&e Click Stânga &7 pentru sus.'
+      right-click-to-cycle-down: '&e Click Dreapta &7 pentru jos.'
+      left-click-to-change: '&e Click Stânga &7 pentru editare.'
+      right-click-to-clear: '&e Click Dreapta &7 pentru ștergere.'
+      click-to-asc: '&e Click &7 pentru sortare crescătoare.'
+      click-to-desc: '&e Click &7 pentru sortare descrescătoare.'
+      click-to-warp: '&e Click &7 pentru teleportare.'
+      click-to-visit: '&e Click &7 pentru a vizita.'
+      right-click-to-visit: '&e Click Dreapta &7 pentru a vizita.'
