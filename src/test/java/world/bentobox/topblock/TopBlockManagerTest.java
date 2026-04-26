@@ -1,243 +1,169 @@
 package world.bentobox.topblock;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import org.bukkit.Bukkit;
-import org.bukkit.Server;
-import org.eclipse.jdt.annotation.NonNull;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
 import world.bentobox.aoneblock.AOneBlock;
 import world.bentobox.aoneblock.dataobjects.OneBlockIslands;
 import world.bentobox.aoneblock.listeners.BlockListener;
-import world.bentobox.bentobox.api.user.User;
-import world.bentobox.bentobox.database.objects.Island;
-import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.topblock.TopBlockManager.TopTenData;
 import world.bentobox.topblock.config.ConfigSettings;
-import world.bentobox.topblock.mocks.ServerMocks;
 
-/**
- * @author tastybento
- *
- */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(Bukkit.class)
-public class TopBlockManagerTest {
+class TopBlockManagerTest extends CommonTestSetup {
 
     @Mock
     private TopBlock addon;
     @Mock
-    private Island island;
+    private AOneBlock aob;
+    @Mock
+    private BlockListener bl;
 
     private TopBlockManager tbm;
-    @Mock
-    private AOneBlock aob;
+    private ConfigSettings settings;
 
-    @Mock
-    private IslandsManager im;
-
-
-    /**
-     * @throws java.lang.Exception
-     */
-    @Before
+    @Override
+    @BeforeEach
     public void setUp() throws Exception {
-        Server server = ServerMocks.newServer();
+        super.setUp();
 
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
-        when(Bukkit.getServer()).thenReturn(server);
-
-        List<OneBlockIslands> list = new ArrayList<>();
-        OneBlockIslands i = new OneBlockIslands(UUID.randomUUID().toString());
-        i.setLifetime(100);
-        i.setBlockNumber(100);
-        i.setPhaseName("phasy");
-        list.add(i);
-
-        // Island manager
-        when(addon.getIslands()).thenReturn(im);
-        when(im.getIslandById(anyString())).thenReturn(Optional.of(island));
-        // AOneBlock
-        BlockListener bl = mock(BlockListener.class); // This class uses static initializations so if it is mocked as a field, it will spark an issue
-        when(bl.getAllIslands()).thenReturn(list);
-        when(aob.getBlockListener()).thenReturn(bl);
+        settings = new ConfigSettings();
+        when(addon.getPlugin()).thenReturn(plugin);
+        when(addon.getSettings()).thenReturn(settings);
         when(addon.getaOneBlock()).thenReturn(aob);
+        when(addon.getIslands()).thenReturn(im);
+        when(aob.getBlockListener()).thenReturn(bl);
+        when(im.getIslandById(anyString())).thenReturn(Optional.of(island));
+
         tbm = new TopBlockManager(addon);
     }
 
-    @After
-    public void tearDown() {
-        ServerMocks.unsetBukkitServer();
-        User.clearUsers();
-        Mockito.framework().clearInlineMocks();
+    private static OneBlockIslands ob(int blockNumber, long lifetime, String phase) {
+        OneBlockIslands i = new OneBlockIslands(UUID.randomUUID().toString());
+        i.setBlockNumber(blockNumber);
+        i.setLifetime(lifetime);
+        i.setPhaseName(phase);
+        return i;
     }
 
-    /**
-     * Test method for {@link world.bentobox.topblock.TopBlockManager#TopBlockManager(world.bentobox.topblock.TopBlock)}.
-     */
     @Test
-    public void testTopBlockManager() {
-        assertNotNull(tbm);
+    void testGetTopTenEmptyByDefault() {
+        assertTrue(tbm.getTopTen(10).isEmpty());
     }
 
-    /**
-     * Test method for {@link world.bentobox.topblock.TopBlockManager.TopTenData}.
-     */
     @Test
-    public void testTopTenDataSame() {
-        TopTenData ttd = new TopTenData(island, 0, 0, "phase one");
-        TopTenData ttd2 = new TopTenData(island, 0, 0, "phase one");
-        assertEquals(ttd, ttd2);
+    void testGetOneBlockDataPopulatesTopTen() {
+        when(bl.getAllIslands()).thenReturn(List.of(
+                ob(50, 100, "Plains"),
+                ob(80, 250, "Underground")));
+
+        tbm.getOneBlockData();
+
+        List<TopTenData> top = tbm.getTopTen(10);
+        assertEquals(2, top.size());
+        // Sorted descending by lifetime
+        assertEquals(250L, top.get(0).lifetime());
+        assertEquals(100L, top.get(1).lifetime());
     }
 
-    /**
-     * Test method for {@link world.bentobox.topblock.TopBlockManager.TopTenData}.
-     */
     @Test
-    public void testTopTenDataBlockDifferent() {
-        TopTenData ttd = new TopTenData(island, 1000, 0, "phase one");
-        TopTenData ttd2 = new TopTenData(island, 0, 0, "phase one");
-        assertNotEquals(ttd, ttd2);
+    void testGetOneBlockDataFiltersZeroLifetime() {
+        when(bl.getAllIslands()).thenReturn(List.of(
+                ob(0, 0, "Plains"),
+                ob(80, 250, "Underground")));
+
+        tbm.getOneBlockData();
+
+        List<TopTenData> top = tbm.getTopTen(10);
+        assertEquals(1, top.size());
+        assertEquals(250L, top.get(0).lifetime());
     }
 
-    /**
-     * Test method for {@link world.bentobox.topblock.TopBlockManager.TopTenData}.
-     */
     @Test
-    public void testTopTenDataLifetimeDifferent() {
-        TopTenData ttd = new TopTenData(island, 0, 0, "phase one");
-        TopTenData ttd2 = new TopTenData(island, 0, 10000, "phase one");
-        assertNotEquals(ttd, ttd2);
+    void testGetOneBlockDataSkipsIslandsWithoutBentoBoxIsland() {
+        when(im.getIslandById(anyString())).thenReturn(Optional.empty());
+        when(bl.getAllIslands()).thenReturn(List.of(ob(80, 250, "Underground")));
+
+        tbm.getOneBlockData();
+
+        assertTrue(tbm.getTopTen(10).isEmpty());
     }
 
-    /**
-     * Test method for {@link world.bentobox.topblock.TopBlockManager.TopTenData}.
-     */
     @Test
-    public void testTopTenDataPhaseDifferent() {
-        TopTenData ttd = new TopTenData(island, 0, 0, "phase one");
-        TopTenData ttd2 = new TopTenData(island, 0, 0, "phase two");
-        assertNotEquals(ttd, ttd2);
+    void testGetOneBlockDataReplacesPreviousResults() {
+        when(bl.getAllIslands()).thenReturn(List.of(ob(80, 250, "Underground")));
+        tbm.getOneBlockData();
+        assertEquals(1, tbm.getTopTen(10).size());
+
+        when(bl.getAllIslands()).thenReturn(List.of());
+        tbm.getOneBlockData();
+        assertTrue(tbm.getTopTen(10).isEmpty());
     }
 
-    /**
-     * Test method for {@link world.bentobox.topblock.TopBlockManager.TopTenData}.
-     */
     @Test
-    public void testTopTenDataGreater() {
-        TopTenData ttd = new TopTenData(island, 10000, 0, "phase fifty");
-        TopTenData ttd2 = new TopTenData(island, 0, 0, "phase two");
-        List<TopTenData> list = new ArrayList<>();
-        list.add(ttd);
-        list.add(ttd2);
-        list = list.stream().sorted(Collections.reverseOrder()).toList();
-        assertEquals(ttd, list.get(0));
-        assertEquals(ttd2, list.get(1));
+    void testGetTopTenLimitsSize() {
+        when(bl.getAllIslands()).thenReturn(List.of(
+                ob(10, 10, "a"),
+                ob(20, 20, "b"),
+                ob(30, 30, "c")));
+        tbm.getOneBlockData();
+
+        assertEquals(2, tbm.getTopTen(2).size());
     }
 
-    /**
-     * Test method for {@link world.bentobox.topblock.TopBlockManager.TopTenData}.
-     */
     @Test
-    public void testTopTenDataLess() {
-        TopTenData ttd = new TopTenData(island, 0, 0, "phase one");
-        TopTenData ttd2 = new TopTenData(island, 10000, 0, "phase fifty");
-        List<TopTenData> list = new ArrayList<>();
-        list.add(ttd);
-        list.add(ttd2);
-        list = list.stream().sorted(Collections.reverseOrder()).toList();
-        assertEquals(ttd2, list.get(0));
-        assertEquals(ttd, list.get(1));
+    void testFormatLevelNullReturnsEmpty() {
+        assertEquals("", tbm.formatLevel(null));
     }
 
-    /**
-     * Test method for {@link world.bentobox.topblock.TopBlockManager.TopTenData}.
-     */
     @Test
-    public void testTopTenDataGreaterLifetime() {
-        TopTenData ttd = new TopTenData(island, 100, 10100, "phase fifty");
-        TopTenData ttd2 = new TopTenData(island, 1000, 0, "phase two");
-        List<TopTenData> list = new ArrayList<>();
-        list.add(ttd);
-        list.add(ttd2);
-        list = list.stream().sorted(Collections.reverseOrder()).toList();
-        assertEquals(ttd, list.get(0));
-        assertEquals(ttd2, list.get(1));
-    }
-
-    /**
-     * Test method for {@link world.bentobox.topblock.TopBlockManager.TopTenData}.
-     */
-    @Test
-    public void testTopTenDataGreaterLifetime2() {
-        TopTenData ttd = new TopTenData(island, 100, 10100, "phase fifty");
-        TopTenData ttd2 = new TopTenData(island, 100, 0, "phase two");
-        List<TopTenData> list = new ArrayList<>();
-        list.add(ttd2);
-        list.add(ttd);
-        list = list.stream().sorted(Collections.reverseOrder()).toList();
-        assertEquals(ttd, list.get(0));
-        assertEquals(ttd2, list.get(1));
-    }
-
-
-    /**
-     * Test method for {@link world.bentobox.topblock.TopBlockManager#getOneBlockData()}.
-     */
-    @Test
-    public void testGetOneBlockData() {
-        this.tbm.getOneBlockData();
-        @NonNull
-        List<TopTenData> list = tbm.getTopTen(10);
-        TopTenData t = list.get(0);
-        assertEquals(100, t.lifetime());
-        assertEquals(100, t.blockNumber());
-        assertEquals("phasy", t.phaseName());
-
-    }
-
-    /**
-     * Test method for {@link world.bentobox.topblock.TopBlockManager#formatLevel(java.lang.Long)}.
-     */
-    @Test
-    public void testFormatLevel() {
-        ConfigSettings settings = new ConfigSettings();
-        settings.setShorthand(true);
-        when(addon.getSettings()).thenReturn(settings);
-        assertEquals("12.3G", tbm.formatLevel(12345678349L));
+    void testFormatLevelNoShorthandReturnsRawString() {
         settings.setShorthand(false);
-        when(addon.getSettings()).thenReturn(settings);
-        assertEquals("12345678349", tbm.formatLevel(12345678349L));
+        assertEquals("104556", tbm.formatLevel(104556L));
     }
 
-    /**
-     * Test method for {@link world.bentobox.topblock.TopBlockManager#getTopTen(int)}.
-     */
     @Test
-    public void testGetTopTen() {
-        List<TopTenData> list = tbm.getTopTen(10);
-        assertTrue(list.isEmpty());
+    void testFormatLevelShorthandUnderThousandUnchanged() {
+        settings.setShorthand(true);
+        assertEquals("999", tbm.formatLevel(999L));
     }
 
+    @Test
+    void testFormatLevelShorthandKilo() {
+        settings.setShorthand(true);
+        assertEquals("10.5k", tbm.formatLevel(10500L));
+    }
+
+    @Test
+    void testFormatLevelShorthandMega() {
+        settings.setShorthand(true);
+        assertEquals("1.5M", tbm.formatLevel(1_527_314L));
+    }
+
+    @Test
+    void testFormatLevelShorthandGiga() {
+        settings.setShorthand(true);
+        assertEquals("3.9G", tbm.formatLevel(3_874_130_021L));
+    }
+
+    @Test
+    void testTopTenDataRecordFields() {
+        TopTenData d = new TopTenData(island, 42, 1234L, "phasy");
+        assertNotNull(d);
+        assertEquals(42, d.blockNumber());
+        assertEquals(1234L, d.lifetime());
+        assertEquals("phasy", d.phaseName());
+        assertEquals(island, d.island());
+    }
 }
