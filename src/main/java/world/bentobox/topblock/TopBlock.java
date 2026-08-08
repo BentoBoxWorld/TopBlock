@@ -1,11 +1,19 @@
 package world.bentobox.topblock;
 
-import world.bentobox.aoneblock.AOneBlock;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+import org.bukkit.World;
+
 import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.configuration.Config;
 import world.bentobox.topblock.commands.TopBlockCommand;
 import world.bentobox.topblock.config.ConfigSettings;
+import world.bentobox.topblock.hooks.AOneBlockHook;
+import world.bentobox.topblock.hooks.ChunkBlockHook;
+import world.bentobox.topblock.hooks.TopBlockHook;
 
 
 /**
@@ -21,7 +29,8 @@ public class TopBlock extends Addon {
     private ConfigSettings settings;
     private Config<ConfigSettings> configObject = new Config<>(this, ConfigSettings.class);
     private TopBlockManager manager;
-    private Addon aOneBlock;
+    // Hooks into the game modes this addon supports; each keeps its own top ten
+    private final List<TopBlockHook> hooks = new ArrayList<>();
 
     @Override
     public void onLoad() {
@@ -53,18 +62,31 @@ public class TopBlock extends Addon {
         manager = new TopBlockManager(this);
         this.registerListener(manager);
 
-        // Find AOneBlock
-        getPlugin().getAddonsManager().getAddonByName("aoneblock")
-        .filter(Addon::isEnabled)
-        .filter(GameModeAddon.class::isInstance)
-        .map(GameModeAddon.class::cast).ifPresentOrElse(gm -> {
+        // Hook into whichever supported game modes are present. Game-mode classes are
+        // only referenced inside the hook constructors, which run after the presence
+        // check, so a game mode that is not installed is never class-loaded.
+        findGameMode("aoneblock").ifPresent(gm -> {
             log("TopBlock hooking into AOneBlock");
             registerCommands(gm);
-            aOneBlock = gm;
-        }, () -> {
-            logError("Could not hook into AOneBlock. Is it loaded?");
-            this.setState(State.DISABLED);
+            hooks.add(new AOneBlockHook(gm));
         });
+        findGameMode("chunkblock").ifPresent(gm -> {
+            log("TopBlock hooking into ChunkBlock");
+            registerCommands(gm);
+            hooks.add(new ChunkBlockHook(gm));
+        });
+
+        if (hooks.isEmpty()) {
+            logError("Could not hook into AOneBlock or ChunkBlock. Is at least one loaded?");
+            this.setState(State.DISABLED);
+        }
+    }
+
+    private Optional<GameModeAddon> findGameMode(String name) {
+        return getPlugin().getAddonsManager().getAddonByName(name)
+                .filter(Addon::isEnabled)
+                .filter(GameModeAddon.class::isInstance)
+                .map(GameModeAddon.class::cast);
     }
 
     private void registerCommands(GameModeAddon gm) {
@@ -101,8 +123,20 @@ public class TopBlock extends Addon {
 
     }
 
-    public AOneBlock getaOneBlock() {
-        return (AOneBlock) aOneBlock;
+    /**
+     * @return the game mode hooks that are active
+     */
+    public List<TopBlockHook> getHooks() {
+        return hooks;
+    }
+
+    /**
+     * Get the hook whose game mode owns the given world, if any.
+     * @param world world to look up
+     * @return hook for that world's game mode
+     */
+    public Optional<TopBlockHook> getHook(World world) {
+        return hooks.stream().filter(h -> h.getGameMode().inWorld(world)).findFirst();
     }
 
 

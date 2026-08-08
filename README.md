@@ -3,18 +3,20 @@
 
 ## About
 
-TopBlock is a [BentoBox](https://github.com/BentoBoxWorld/BentoBox) addon that produces a Top Ten ranking for the [AOneBlock](https://github.com/BentoBoxWorld/AOneBlock) game mode based on how many magic blocks each island has mined.
+TopBlock is a [BentoBox](https://github.com/BentoBoxWorld/BentoBox) addon that produces a Top Ten ranking for the [AOneBlock](https://github.com/BentoBoxWorld/AOneBlock) and [ChunkBlock](https://github.com/BentoBoxWorld/ChunkBlock) game modes based on how many magic blocks each island has mined. Either game mode (or both) can be installed — each gets its own independent top ten, command, and placeholders.
 
 ## Requirements
 
 - Paper 1.21.x (Spigot is no longer supported)
 - Java 21
 - BentoBox 3.14.0 or later
-- AOneBlock 1.18.0 or later
+- At least one of:
+  - AOneBlock 1.18.0 or later
+  - ChunkBlock 1.0.1 or later
 
 ## How to use
 
-1. Drop the TopBlock jar into your server's `plugins/BentoBox/addons/` folder. AOneBlock must already be installed there too.
+1. Drop the TopBlock jar into your server's `plugins/BentoBox/addons/` folder. AOneBlock and/or ChunkBlock must already be installed there too.
 2. Restart the server. TopBlock will create `addons/TopBlock/config.yml` and `addons/TopBlock/panels/top_panel.yml`.
 3. Edit `config.yml` if you want to tune anything (see below) and restart the server again to apply.
 
@@ -31,9 +33,11 @@ The panel layout lives in `addons/TopBlock/panels/top_panel.yml`. Edits are pres
 
 ## Commands
 
-`/ob topblock` (alias: `/oneblock topblock`) — opens the Top Ten panel.
+`/ob topblock` (alias: `/oneblock topblock`) — opens the AOneBlock Top Ten panel.
 
-To get into the top ten, a player just needs to mine at least one magic block on their AOneBlock island. The list refreshes every `refresh-time` minutes; a player who just started mining may need to wait that long before appearing.
+If ChunkBlock is installed, its player command gets a `topblock` subcommand too, which opens ChunkBlock's own Top Ten panel.
+
+To get into the top ten, a player just needs to mine at least one magic block on their island. Each game mode keeps a separate ranking. The lists refresh every `refresh-time` minutes; a player who just started mining may need to wait that long before appearing.
 
 ## Permissions
 
@@ -47,11 +51,17 @@ permissions:
   'aoneblock.intopten':
     description: Player's island will be listed in the top ten. Remove from admins or testers to hide them.
     default: true
+  'chunkblock.island.topblock':
+    description: Player can use the TopBlock command
+    default: true
+  'chunkblock.intopten':
+    description: Player's island will be listed in the top ten. Remove from admins or testers to hide them.
+    default: true
 ```
 
-If an island owner is **online** and lacks `aoneblock.intopten`, their island is excluded from the top ten panel and from placeholders. **Offline** owners are always included — to hide an admin or tester, remove the perm from the player who can actually log in. Removing the perm from an entire group (e.g. ops) excludes everyone in that group while online.
+If an island owner is **online** and lacks `<gamemode>.intopten`, their island is excluded from that game mode's top ten panel and placeholders. **Offline** owners are always included — to hide an admin or tester, remove the perm from the player who can actually log in. Removing the perm from an entire group (e.g. ops) excludes everyone in that group while online.
 
-The icon shown for each rank can be overridden per player by granting `aoneblock.topblock.icon.<MATERIAL>` (for example `aoneblock.topblock.icon.diamond_block`). Without an override, the rank icon is the player's head.
+The icon shown for each rank can be overridden per player by granting `<gamemode>.topblock.icon.<MATERIAL>` (for example `aoneblock.topblock.icon.diamond_block`). Without an override, the rank icon is the player's head.
 
 ## Placeholders
 
@@ -63,6 +73,8 @@ The icon shown for each rank can be overridden per player by granting `aoneblock
 %aoneblock_island_count_top_RANK%         - Block count of magic blocks mined this round
 %aoneblock_island_lifetime_top_RANK%      - Lifetime count of magic blocks mined
 ```
+
+If ChunkBlock is installed, the same placeholders exist with the `chunkblock` prefix (e.g. `%chunkblock_island_count_top_1%`) and report ChunkBlock's own ranking.
 
 `RANK` is `1` to `10`. If fewer than `RANK` islands qualify for the top ten, the placeholder returns an empty string.
 
