@@ -6,12 +6,18 @@ api-version: 2.7.1
 
 authors: tastybento
 
-depend: AOneBlock
+softdepend: AOneBlock, ChunkBlock
 
 permissions:
   'aoneblock.island.topblock':
     description: Player can use TopBlock command
     default: true
   'aoneblock.intopten':
+    description: Player's island will be listed in the top ten. Remove from admins or testers to hide them.
+    default: true
+  'chunkblock.island.topblock':
+    description: Player can use TopBlock command
+    default: true
+  'chunkblock.intopten':
     description: Player's island will be listed in the top ten. Remove from admins or testers to hide them.
     default: true

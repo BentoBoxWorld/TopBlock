@@ -60,6 +60,10 @@
         <bentobox.version>3.14.0-SNAPSHOT</bentobox.version>
         <!-- AOneBlock addon version -->
         <aoneblock.version>1.18.0</aoneblock.version>
+        <!-- ChunkBlock addon version -->
+        <chunkblock.version>1.0.1</chunkblock.version>
+        <!-- Level addon version - needed only at test time to mock ChunkBlock, which hard-depends on it -->
+        <level.version>2.6.2</level.version>
         <!-- Panel Utils version -->
         <panelutils.version>1.1.0</panelutils.version>
         <!-- Revision variable removes warning about dynamic version -->
@@ -164,6 +168,18 @@
             <artifactId>aoneblock</artifactId>
             <version>${aoneblock.version}</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>world.bentobox</groupId>
+            <artifactId>chunkblock</artifactId>
+            <version>${chunkblock.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>world.bentobox</groupId>
+            <artifactId>level</artifactId>
+            <version>${level.version}</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>lv.id.bonne</groupId>
