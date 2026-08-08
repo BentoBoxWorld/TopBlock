@@ -16,7 +16,7 @@ Maven project, Java 21, Paper 1.21.11 API, BentoBox 3.14.0, AOneBlock 1.18.0, Ch
 - Run a single test method: `mvn test -Dtest=TopBlockManagerTest#testFormatLevelShorthandKilo`
 - The Surefire config sets a long list of `--add-opens` JVM flags — required for Mockito + MockBukkit reflection on Java 21; do not remove them when tweaking the build.
 
-Version handling is driven by Maven properties: `build.version` is the human version (currently 2.0.0), `revision` resolves to `${build.version}-SNAPSHOT` locally and to `${build.version}` under the `master` profile (activated by `GIT_BRANCH=origin/master` on Jenkins). `build.number` is `-LOCAL` locally, `-b<num>` on CI, empty on master. Don't hand-edit `<version>` — bump `build.version`.
+Version handling is driven by Maven properties: `build.version` is the human version (currently 2.1.0), `revision` resolves to `${build.version}-SNAPSHOT` locally and to `${build.version}` under the `master` profile (activated by `GIT_BRANCH=origin/master` on Jenkins). `build.number` is `-LOCAL` locally, `-b<num>` on CI, empty on master. Don't hand-edit `<version>` — bump `build.version`.
 
 ## Runtime entry points (Pladdon pattern)
 
