@@ -1,6 +1,7 @@
 package world.bentobox.topblock;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -51,6 +52,8 @@ class PlaceholderManagerTest extends CommonTestSetup {
         when(addon.getIslands()).thenReturn(im);
         when(addon.getPlayers()).thenReturn(playersMgr);
         when(hook.getGameMode()).thenReturn(gameMode);
+        when(gameMode.inWorld(any(org.bukkit.World.class))).thenReturn(true);
+        when(island.getWorld()).thenReturn(world);
         when(im.getIslandById(anyString())).thenReturn(Optional.of(island));
 
         // Single island in top ten

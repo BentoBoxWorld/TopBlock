@@ -171,7 +171,8 @@ public class TopLevelPanel {
             } else {
                 builder.icon(owner.getName());
             }
-        } else if (template.icon() != null) {
+        } else if (template.icon() != null
+                && template.icon().getType() != Material.PLAYER_HEAD) {
             builder.icon(template.icon().clone());
         } else if (owner != null) {
             builder.icon(owner.getName());
