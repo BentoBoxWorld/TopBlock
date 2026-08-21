@@ -13,11 +13,13 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 
+import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.topblock.TopBlockManager.TopTenData;
 import world.bentobox.topblock.config.ConfigSettings;
 import world.bentobox.topblock.hooks.IslandBlockData;
@@ -29,6 +31,8 @@ class TopBlockManagerTest extends CommonTestSetup {
     private TopBlock addon;
     @Mock
     private TopBlockHook hook;
+    @Mock
+    private GameModeAddon gma;
 
     private TopBlockManager tbm;
     private ConfigSettings settings;
@@ -45,6 +49,8 @@ class TopBlockManagerTest extends CommonTestSetup {
         when(addon.getIslands()).thenReturn(im);
         when(im.getIslandById(anyString())).thenReturn(Optional.of(island));
         when(island.getWorld()).thenReturn(world);
+        when(hook.getGameMode()).thenReturn(gma);
+        when(gma.inWorld(world)).thenReturn(true);
         when(iwm.getPermissionPrefix(any())).thenReturn("aoneblock.");
 
         tbm = new TopBlockManager(addon);
@@ -111,6 +117,9 @@ class TopBlockManagerTest extends CommonTestSetup {
     @Test
     void testTopTensAreSeparatePerHook() {
         TopBlockHook hook2 = mock(TopBlockHook.class);
+        GameModeAddon gma2 = mock(GameModeAddon.class);
+        when(hook2.getGameMode()).thenReturn(gma2);
+        when(gma2.inWorld(world)).thenReturn(true);
         when(addon.getHooks()).thenReturn(List.of(hook, hook2));
         when(hook.getAllIslandData()).thenReturn(List.of(ib(80, 250, "Underground")));
         when(hook2.getAllIslandData()).thenReturn(List.of(
@@ -225,6 +234,17 @@ class TopBlockManagerTest extends CommonTestSetup {
     @Test
     void testRefreshExcludesIslandWithoutOwner() {
         when(island.getOwner()).thenReturn(null);
+        when(hook.getAllIslandData()).thenReturn(List.of(ib(80, 250, "Underground")));
+        tbm.refreshAll();
+
+        assertTrue(tbm.getTopTen(hook, 10).isEmpty());
+    }
+
+    @Test
+    void testRefreshFiltersIslandsFromWrongGameMode() {
+        World otherWorld = mock(World.class);
+        when(island.getWorld()).thenReturn(otherWorld);
+        when(gma.inWorld(otherWorld)).thenReturn(false);
         when(hook.getAllIslandData()).thenReturn(List.of(ib(80, 250, "Underground")));
         tbm.refreshAll();
 

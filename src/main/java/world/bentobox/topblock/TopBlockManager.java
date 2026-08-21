@@ -92,6 +92,7 @@ public class TopBlockManager implements Listener {
         List<TopTenData> data = new ArrayList<>();
         hook.getAllIslandData().stream().filter(i -> i.lifetime() > 0).forEach(i ->
         addon.getIslands().getIslandById(i.uniqueId())
+                .filter(island -> hook.getGameMode().inWorld(island.getWorld()))
                 .filter(this::ownerInTopTen)
                 .ifPresent(island ->
         data.add(new TopTenData(island, i.blockNumber(), i.lifetime(), i.phaseName()))));

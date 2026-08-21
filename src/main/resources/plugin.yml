@@ -3,6 +3,12 @@ main: world.bentobox.topblock.TopBlockPladdon
 version: ${project.version}${build.number}
 api-version: "1.21"
 
+# Pladdon names of the game modes we hook into. Soft, because either alone is enough,
+# but required so that our plugin class loader can see their classes.
+softdepend:
+  - BentoBox-AOneBlock
+  - BentoBox-ChunkBlock
+
 authors: [tastybento]
 contributors: ["The BentoBoxWorld Community"]
 website: https://bentobox.world
