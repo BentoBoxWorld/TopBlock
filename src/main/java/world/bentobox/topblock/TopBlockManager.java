@@ -5,6 +5,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -12,6 +13,7 @@ import java.util.TreeMap;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -19,9 +21,9 @@ import org.bukkit.event.Listener;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
-import world.bentobox.aoneblock.AOneBlock;
 import world.bentobox.bentobox.api.events.BentoBoxReadyEvent;
 import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.topblock.hooks.TopBlockHook;
 
 
 public class TopBlockManager implements Listener {
@@ -55,8 +57,8 @@ public class TopBlockManager implements Listener {
         }
     }
 
-    // Top ten lists
-    private final List<TopTenData> topTen = new ArrayList<>();
+    // Top ten lists, one per hooked game mode
+    private final Map<TopBlockHook, List<TopTenData>> topTens = new HashMap<>();
 
 
     /**
@@ -70,25 +72,31 @@ public class TopBlockManager implements Listener {
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onBentoBoxReady(BentoBoxReadyEvent e) {
-        // Load the top ten from AOneBlock every so often
+        // Load the top ten from each hooked game mode every so often
         Bukkit.getScheduler().runTaskTimer(addon.getPlugin(), () -> {
-            // Update TopTen
-            getOneBlockData();
+            // Update TopTens
+            refreshAll();
             // Update placeholders
             phm.updateTopTen();
         }, 0, addon.getSettings().getRefreshTime() * 20L * 60);
         // Register placeholders after everything is loaded
-        Bukkit.getScheduler().runTaskLater(addon.getPlugin(), () -> phm.registerPlaceholders(addon.getaOneBlock()), 10L);
+        Bukkit.getScheduler().runTaskLater(addon.getPlugin(),
+                () -> addon.getHooks().forEach(phm::registerPlaceholders), 10L);
     }
 
-    void getOneBlockData() {
-        AOneBlock ob = addon.getaOneBlock();
-        topTen.clear();
-        ob.getBlockListener().getAllIslands().stream().filter(i -> i.getLifetime() > 0).forEach(i ->
-        addon.getIslands().getIslandById(i.getUniqueId())
+    void refreshAll() {
+        addon.getHooks().forEach(this::refresh);
+    }
+
+    void refresh(TopBlockHook hook) {
+        List<TopTenData> data = new ArrayList<>();
+        hook.getAllIslandData().stream().filter(i -> i.lifetime() > 0).forEach(i ->
+        addon.getIslands().getIslandById(i.uniqueId())
+                .filter(island -> hook.getGameMode().inWorld(island.getWorld()))
                 .filter(this::ownerInTopTen)
                 .ifPresent(island ->
-        topTen.add(new TopTenData(island, i.getBlockNumber(), i.getLifetime(), i.getPhaseName()))));
+        data.add(new TopTenData(island, i.blockNumber(), i.lifetime(), i.phaseName()))));
+        topTens.put(hook, data);
     }
 
     /**
@@ -136,16 +144,28 @@ public class TopBlockManager implements Listener {
     }
 
     /**
-     * Get the top ten. Returns offline players or players with the intopten permission.
+     * Get the top ten for a hooked game mode. Returns offline players or players with the intopten permission.
+     * @param hook - game mode hook
      * @param size - size of the top ten
-     * @return sorted top ten map
+     * @return sorted top ten list
      */
     @NonNull
-    public List<TopTenData> getTopTen(int size) {
-        // Return the sorted map
-        return topTen.stream()
+    public List<TopTenData> getTopTen(TopBlockHook hook, int size) {
+        // Return the sorted list
+        return topTens.getOrDefault(hook, List.of()).stream()
                 .sorted(Collections.reverseOrder()).limit(size)
                 .toList();
+    }
+
+    /**
+     * Get the top ten for the game mode that owns the given world.
+     * @param world - world of a hooked game mode
+     * @param size - size of the top ten
+     * @return sorted top ten list, empty if no game mode owns this world
+     */
+    @NonNull
+    public List<TopTenData> getTopTen(World world, int size) {
+        return addon.getHook(world).map(h -> getTopTen(h, size)).orElseGet(List::of);
     }
 
 }

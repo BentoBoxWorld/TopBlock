@@ -27,7 +27,7 @@ import world.bentobox.topblock.util.Utils;
 
 
 /**
- * This panel opens the top ten panel for AOneBlock.
+ * This panel opens the top ten panel for the game mode that owns the given world.
  */
 public class TopLevelPanel {
 
@@ -46,7 +46,7 @@ public class TopLevelPanel {
         this.user = user;
         this.world = world;
         this.iconPermission = permissionPrefix + "topblock.icon";
-        this.topIslands = this.addon.getManager().getTopTen(TopBlock.TEN);
+        this.topIslands = this.addon.getManager().getTopTen(world, TopBlock.TEN);
     }
 
 
@@ -171,7 +171,8 @@ public class TopLevelPanel {
             } else {
                 builder.icon(owner.getName());
             }
-        } else if (template.icon() != null) {
+        } else if (template.icon() != null
+                && template.icon().getType() != Material.PLAYER_HEAD) {
             builder.icon(template.icon().clone());
         } else if (owner != null) {
             builder.icon(owner.getName());

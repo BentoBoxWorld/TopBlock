@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.List;
@@ -12,25 +13,26 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 
-import world.bentobox.aoneblock.AOneBlock;
-import world.bentobox.aoneblock.dataobjects.OneBlockIslands;
-import world.bentobox.aoneblock.listeners.BlockListener;
+import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.topblock.TopBlockManager.TopTenData;
 import world.bentobox.topblock.config.ConfigSettings;
+import world.bentobox.topblock.hooks.IslandBlockData;
+import world.bentobox.topblock.hooks.TopBlockHook;
 
 class TopBlockManagerTest extends CommonTestSetup {
 
     @Mock
     private TopBlock addon;
     @Mock
-    private AOneBlock aob;
+    private TopBlockHook hook;
     @Mock
-    private BlockListener bl;
+    private GameModeAddon gma;
 
     private TopBlockManager tbm;
     private ConfigSettings settings;
@@ -43,38 +45,35 @@ class TopBlockManagerTest extends CommonTestSetup {
         settings = new ConfigSettings();
         when(addon.getPlugin()).thenReturn(plugin);
         when(addon.getSettings()).thenReturn(settings);
-        when(addon.getaOneBlock()).thenReturn(aob);
+        when(addon.getHooks()).thenReturn(List.of(hook));
         when(addon.getIslands()).thenReturn(im);
-        when(aob.getBlockListener()).thenReturn(bl);
         when(im.getIslandById(anyString())).thenReturn(Optional.of(island));
         when(island.getWorld()).thenReturn(world);
+        when(hook.getGameMode()).thenReturn(gma);
+        when(gma.inWorld(world)).thenReturn(true);
         when(iwm.getPermissionPrefix(any())).thenReturn("aoneblock.");
 
         tbm = new TopBlockManager(addon);
     }
 
-    private static OneBlockIslands ob(int blockNumber, long lifetime, String phase) {
-        OneBlockIslands i = new OneBlockIslands(UUID.randomUUID().toString());
-        i.setBlockNumber(blockNumber);
-        i.setLifetime(lifetime);
-        i.setPhaseName(phase);
-        return i;
+    private static IslandBlockData ib(int blockNumber, long lifetime, String phase) {
+        return new IslandBlockData(UUID.randomUUID().toString(), blockNumber, lifetime, phase);
     }
 
     @Test
     void testGetTopTenEmptyByDefault() {
-        assertTrue(tbm.getTopTen(10).isEmpty());
+        assertTrue(tbm.getTopTen(hook, 10).isEmpty());
     }
 
     @Test
-    void testGetOneBlockDataPopulatesTopTen() {
-        when(bl.getAllIslands()).thenReturn(List.of(
-                ob(50, 100, "Plains"),
-                ob(80, 250, "Underground")));
+    void testRefreshPopulatesTopTen() {
+        when(hook.getAllIslandData()).thenReturn(List.of(
+                ib(50, 100, "Plains"),
+                ib(80, 250, "Underground")));
 
-        tbm.getOneBlockData();
+        tbm.refreshAll();
 
-        List<TopTenData> top = tbm.getTopTen(10);
+        List<TopTenData> top = tbm.getTopTen(hook, 10);
         assertEquals(2, top.size());
         // Sorted descending by lifetime
         assertEquals(250L, top.get(0).lifetime());
@@ -82,48 +81,86 @@ class TopBlockManagerTest extends CommonTestSetup {
     }
 
     @Test
-    void testGetOneBlockDataFiltersZeroLifetime() {
-        when(bl.getAllIslands()).thenReturn(List.of(
-                ob(0, 0, "Plains"),
-                ob(80, 250, "Underground")));
+    void testRefreshFiltersZeroLifetime() {
+        when(hook.getAllIslandData()).thenReturn(List.of(
+                ib(0, 0, "Plains"),
+                ib(80, 250, "Underground")));
 
-        tbm.getOneBlockData();
+        tbm.refreshAll();
 
-        List<TopTenData> top = tbm.getTopTen(10);
+        List<TopTenData> top = tbm.getTopTen(hook, 10);
         assertEquals(1, top.size());
         assertEquals(250L, top.get(0).lifetime());
     }
 
     @Test
-    void testGetOneBlockDataSkipsIslandsWithoutBentoBoxIsland() {
+    void testRefreshSkipsIslandsWithoutBentoBoxIsland() {
         when(im.getIslandById(anyString())).thenReturn(Optional.empty());
-        when(bl.getAllIslands()).thenReturn(List.of(ob(80, 250, "Underground")));
+        when(hook.getAllIslandData()).thenReturn(List.of(ib(80, 250, "Underground")));
 
-        tbm.getOneBlockData();
+        tbm.refreshAll();
 
-        assertTrue(tbm.getTopTen(10).isEmpty());
+        assertTrue(tbm.getTopTen(hook, 10).isEmpty());
     }
 
     @Test
-    void testGetOneBlockDataReplacesPreviousResults() {
-        when(bl.getAllIslands()).thenReturn(List.of(ob(80, 250, "Underground")));
-        tbm.getOneBlockData();
-        assertEquals(1, tbm.getTopTen(10).size());
+    void testRefreshReplacesPreviousResults() {
+        when(hook.getAllIslandData()).thenReturn(List.of(ib(80, 250, "Underground")));
+        tbm.refreshAll();
+        assertEquals(1, tbm.getTopTen(hook, 10).size());
 
-        when(bl.getAllIslands()).thenReturn(List.of());
-        tbm.getOneBlockData();
-        assertTrue(tbm.getTopTen(10).isEmpty());
+        when(hook.getAllIslandData()).thenReturn(List.of());
+        tbm.refreshAll();
+        assertTrue(tbm.getTopTen(hook, 10).isEmpty());
+    }
+
+    @Test
+    void testTopTensAreSeparatePerHook() {
+        TopBlockHook hook2 = mock(TopBlockHook.class);
+        GameModeAddon gma2 = mock(GameModeAddon.class);
+        when(hook2.getGameMode()).thenReturn(gma2);
+        when(gma2.inWorld(world)).thenReturn(true);
+        when(addon.getHooks()).thenReturn(List.of(hook, hook2));
+        when(hook.getAllIslandData()).thenReturn(List.of(ib(80, 250, "Underground")));
+        when(hook2.getAllIslandData()).thenReturn(List.of(
+                ib(10, 30, "Plains"),
+                ib(20, 40, "Plains")));
+
+        tbm.refreshAll();
+
+        assertEquals(1, tbm.getTopTen(hook, 10).size());
+        assertEquals(250L, tbm.getTopTen(hook, 10).get(0).lifetime());
+        assertEquals(2, tbm.getTopTen(hook2, 10).size());
+        assertEquals(40L, tbm.getTopTen(hook2, 10).get(0).lifetime());
+    }
+
+    @Test
+    void testGetTopTenByWorld() {
+        when(addon.getHook(world)).thenReturn(Optional.of(hook));
+        when(hook.getAllIslandData()).thenReturn(List.of(ib(80, 250, "Underground")));
+        tbm.refreshAll();
+
+        assertEquals(1, tbm.getTopTen(world, 10).size());
+    }
+
+    @Test
+    void testGetTopTenByWorldWithoutHookIsEmpty() {
+        when(addon.getHook(world)).thenReturn(Optional.empty());
+        when(hook.getAllIslandData()).thenReturn(List.of(ib(80, 250, "Underground")));
+        tbm.refreshAll();
+
+        assertTrue(tbm.getTopTen(world, 10).isEmpty());
     }
 
     @Test
     void testGetTopTenLimitsSize() {
-        when(bl.getAllIslands()).thenReturn(List.of(
-                ob(10, 10, "a"),
-                ob(20, 20, "b"),
-                ob(30, 30, "c")));
-        tbm.getOneBlockData();
+        when(hook.getAllIslandData()).thenReturn(List.of(
+                ib(10, 10, "a"),
+                ib(20, 20, "b"),
+                ib(30, 30, "c")));
+        tbm.refreshAll();
 
-        assertEquals(2, tbm.getTopTen(2).size());
+        assertEquals(2, tbm.getTopTen(hook, 2).size());
     }
 
     @Test
@@ -162,65 +199,56 @@ class TopBlockManagerTest extends CommonTestSetup {
     }
 
     @Test
-    void testGetOneBlockDataExcludesOnlineOwnerWithoutIntoptenPerm() {
-        Player p = org.mockito.Mockito.mock(Player.class);
+    void testRefreshExcludesOnlineOwnerWithoutIntoptenPerm() {
+        Player p = mock(Player.class);
         when(p.hasPermission("aoneblock.intopten")).thenReturn(false);
         mockedBukkit.when(() -> Bukkit.getPlayer(any(UUID.class))).thenReturn(p);
 
-        when(bl.getAllIslands()).thenReturn(List.of(
-                new OneBlockIslands(UUID.randomUUID().toString()) {{
-                    setBlockNumber(80);
-                    setLifetime(250);
-                    setPhaseName("Underground");
-                }}));
-        tbm.getOneBlockData();
+        when(hook.getAllIslandData()).thenReturn(List.of(ib(80, 250, "Underground")));
+        tbm.refreshAll();
 
-        assertTrue(tbm.getTopTen(10).isEmpty());
+        assertTrue(tbm.getTopTen(hook, 10).isEmpty());
     }
 
     @Test
-    void testGetOneBlockDataIncludesOnlineOwnerWithIntoptenPerm() {
-        Player p = org.mockito.Mockito.mock(Player.class);
+    void testRefreshIncludesOnlineOwnerWithIntoptenPerm() {
+        Player p = mock(Player.class);
         when(p.hasPermission("aoneblock.intopten")).thenReturn(true);
         mockedBukkit.when(() -> Bukkit.getPlayer(any(UUID.class))).thenReturn(p);
 
-        when(bl.getAllIslands()).thenReturn(List.of(
-                new OneBlockIslands(UUID.randomUUID().toString()) {{
-                    setBlockNumber(80);
-                    setLifetime(250);
-                    setPhaseName("Underground");
-                }}));
-        tbm.getOneBlockData();
+        when(hook.getAllIslandData()).thenReturn(List.of(ib(80, 250, "Underground")));
+        tbm.refreshAll();
 
-        assertEquals(1, tbm.getTopTen(10).size());
+        assertEquals(1, tbm.getTopTen(hook, 10).size());
     }
 
     @Test
-    void testGetOneBlockDataIncludesOfflineOwner() {
+    void testRefreshIncludesOfflineOwner() {
         // CommonTestSetup already stubs Bukkit.getPlayer -> null
-        when(bl.getAllIslands()).thenReturn(List.of(
-                new OneBlockIslands(UUID.randomUUID().toString()) {{
-                    setBlockNumber(80);
-                    setLifetime(250);
-                    setPhaseName("Underground");
-                }}));
-        tbm.getOneBlockData();
+        when(hook.getAllIslandData()).thenReturn(List.of(ib(80, 250, "Underground")));
+        tbm.refreshAll();
 
-        assertEquals(1, tbm.getTopTen(10).size());
+        assertEquals(1, tbm.getTopTen(hook, 10).size());
     }
 
     @Test
-    void testGetOneBlockDataExcludesIslandWithoutOwner() {
+    void testRefreshExcludesIslandWithoutOwner() {
         when(island.getOwner()).thenReturn(null);
-        when(bl.getAllIslands()).thenReturn(List.of(
-                new OneBlockIslands(UUID.randomUUID().toString()) {{
-                    setBlockNumber(80);
-                    setLifetime(250);
-                    setPhaseName("Underground");
-                }}));
-        tbm.getOneBlockData();
+        when(hook.getAllIslandData()).thenReturn(List.of(ib(80, 250, "Underground")));
+        tbm.refreshAll();
 
-        assertTrue(tbm.getTopTen(10).isEmpty());
+        assertTrue(tbm.getTopTen(hook, 10).isEmpty());
+    }
+
+    @Test
+    void testRefreshFiltersIslandsFromWrongGameMode() {
+        World otherWorld = mock(World.class);
+        when(island.getWorld()).thenReturn(otherWorld);
+        when(gma.inWorld(otherWorld)).thenReturn(false);
+        when(hook.getAllIslandData()).thenReturn(List.of(ib(80, 250, "Underground")));
+        tbm.refreshAll();
+
+        assertTrue(tbm.getTopTen(hook, 10).isEmpty());
     }
 
     @Test

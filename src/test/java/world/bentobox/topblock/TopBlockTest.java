@@ -1,5 +1,8 @@
 package world.bentobox.topblock;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -23,13 +26,17 @@ import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
+import world.bentobox.aoneblock.AOneBlock;
 import world.bentobox.bentobox.api.addons.Addon.State;
 import world.bentobox.bentobox.api.addons.AddonDescription;
 import world.bentobox.bentobox.database.AbstractDatabaseHandler;
 import world.bentobox.bentobox.database.DatabaseSetup;
 import world.bentobox.bentobox.managers.AddonsManager;
 import world.bentobox.bentobox.managers.CommandsManager;
+import world.bentobox.chunkblock.ChunkBlock;
 import world.bentobox.topblock.config.ConfigSettings;
+import world.bentobox.topblock.hooks.AOneBlockHook;
+import world.bentobox.topblock.hooks.ChunkBlockHook;
 
 class TopBlockTest extends CommonTestSetup {
 
@@ -65,10 +72,11 @@ class TopBlockTest extends CommonTestSetup {
         CommandsManager cm = mock(CommandsManager.class);
         when(plugin.getCommandsManager()).thenReturn(cm);
 
-        // AddonsManager — no aoneblock present
+        // AddonsManager — no game modes present by default
         when(plugin.getAddonsManager()).thenReturn(am);
         when(am.getGameModeAddons()).thenReturn(Collections.emptyList());
         when(am.getAddonByName("aoneblock")).thenReturn(Optional.empty());
+        when(am.getAddonByName("chunkblock")).thenReturn(Optional.empty());
 
         // FlagsManager
         when(plugin.getFlagsManager()).thenReturn(fm);
@@ -105,6 +113,22 @@ class TopBlockTest extends CommonTestSetup {
         jos.closeEntry();
     }
 
+    private AOneBlock mockAOneBlock() {
+        AOneBlock aob = mock(AOneBlock.class);
+        when(aob.isEnabled()).thenReturn(true);
+        when(aob.getPlayerCommand()).thenReturn(Optional.empty());
+        when(am.getAddonByName("aoneblock")).thenReturn(Optional.of(aob));
+        return aob;
+    }
+
+    private ChunkBlock mockChunkBlock() {
+        ChunkBlock cb = mock(ChunkBlock.class);
+        when(cb.isEnabled()).thenReturn(true);
+        when(cb.getPlayerCommand()).thenReturn(Optional.empty());
+        when(am.getAddonByName("chunkblock")).thenReturn(Optional.of(cb));
+        return cb;
+    }
+
     @Test
     void testGetSettingsNullBeforeLoad() {
         assertNull(addon.getSettings());
@@ -127,13 +151,81 @@ class TopBlockTest extends CommonTestSetup {
     }
 
     @Test
-    void testOnEnableWithoutAOneBlockDisables() {
-        addon.onLoad();
-        addon.onEnable();
-        // AOneBlock not present → addon disables itself
+    void testOnEnableWithoutGameModesDisables() {
+        loadAndEnable();
+        // Neither AOneBlock nor ChunkBlock present → addon disables itself
         assertTrue(addon.getState() == State.DISABLED);
-        // Manager is still constructed before the AOneBlock lookup
+        assertTrue(addon.getHooks().isEmpty());
+        // Manager is still constructed before the game mode lookup
         assertNotNull(addon.getManager());
+    }
+
+    /**
+     * A freshly constructed Addon starts in DISABLED state and only AddonsManager
+     * flips it to ENABLED, so mark it LOADED first — then a DISABLED state after
+     * onEnable can only mean the addon disabled itself.
+     */
+    private void loadAndEnable() {
+        addon.onLoad();
+        addon.setState(State.LOADED);
+        addon.onEnable();
+    }
+
+    @Test
+    void testOnEnableWithAOneBlockOnly() {
+        AOneBlock aob = mockAOneBlock();
+        loadAndEnable();
+        assertNotEquals(State.DISABLED, addon.getState());
+        assertEquals(1, addon.getHooks().size());
+        assertInstanceOf(AOneBlockHook.class, addon.getHooks().get(0));
+        assertEquals(aob, addon.getHooks().get(0).getGameMode());
+    }
+
+    @Test
+    void testOnEnableWithChunkBlockOnly() {
+        ChunkBlock cb = mockChunkBlock();
+        loadAndEnable();
+        assertNotEquals(State.DISABLED, addon.getState());
+        assertEquals(1, addon.getHooks().size());
+        assertInstanceOf(ChunkBlockHook.class, addon.getHooks().get(0));
+        assertEquals(cb, addon.getHooks().get(0).getGameMode());
+    }
+
+    @Test
+    void testOnEnableWithBothGameModes() {
+        mockAOneBlock();
+        mockChunkBlock();
+        loadAndEnable();
+        assertNotEquals(State.DISABLED, addon.getState());
+        assertEquals(2, addon.getHooks().size());
+        assertInstanceOf(AOneBlockHook.class, addon.getHooks().get(0));
+        assertInstanceOf(ChunkBlockHook.class, addon.getHooks().get(1));
+    }
+
+    @Test
+    void testOnEnableSkipsDisabledGameMode() {
+        AOneBlock aob = mockAOneBlock();
+        when(aob.isEnabled()).thenReturn(false);
+        loadAndEnable();
+        assertTrue(addon.getState() == State.DISABLED);
+        assertTrue(addon.getHooks().isEmpty());
+    }
+
+    @Test
+    void testGetHookByWorld() {
+        AOneBlock aob = mockAOneBlock();
+        when(aob.inWorld(world)).thenReturn(true);
+        loadAndEnable();
+        assertTrue(addon.getHook(world).isPresent());
+        assertEquals(aob, addon.getHook(world).get().getGameMode());
+    }
+
+    @Test
+    void testGetHookByWorldNoMatch() {
+        AOneBlock aob = mockAOneBlock();
+        when(aob.inWorld(world)).thenReturn(false);
+        loadAndEnable();
+        assertTrue(addon.getHook(world).isEmpty());
     }
 
     @Test

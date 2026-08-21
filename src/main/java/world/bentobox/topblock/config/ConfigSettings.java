@@ -10,7 +10,7 @@ import world.bentobox.bentobox.api.configuration.StoreAt;
 @ConfigComment("")
 public class ConfigSettings implements ConfigObject {
     @ConfigComment("How often the Top Ten should be refreshed in minutes. Minimum is 1 minute, default is 5.")
-    @ConfigComment("Each refresh requires reading every island from the database, so this should not be done too often.")
+    @ConfigComment("Each refresh requires reading every island of every hooked game mode from the database, so this should not be done too often.")
     @ConfigEntry(path = "refresh-time")
     private int refreshTime = 5;
     
