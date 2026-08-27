@@ -26,3 +26,7 @@ hs_err_pid*
 /dependency-reduced-pom.xml
 /.classpath
 /.DS_Store
+
+# IntelliJ IDEA
+/.idea/
+*.iml
