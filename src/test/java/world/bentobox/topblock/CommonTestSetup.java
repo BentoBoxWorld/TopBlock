@@ -123,6 +123,15 @@ public abstract class CommonTestSetup {
         mockedBukkit.when(Bukkit::getItemFactory).thenReturn(itemFactory);
         mockedBukkit.when(Bukkit::getServer).thenReturn(server);
         mockedBukkit.when(Bukkit::getScheduler).thenReturn(sch);
+        // TopBlockManager.refresh() hops async -> sync via the scheduler; run both legs inline in tests
+        when(sch.runTaskAsynchronously(any(), any(Runnable.class))).thenAnswer(i -> {
+            i.getArgument(1, Runnable.class).run();
+            return null;
+        });
+        when(sch.runTask(any(), any(Runnable.class))).thenAnswer(i -> {
+            i.getArgument(1, Runnable.class).run();
+            return null;
+        });
         // By default treat island owners as offline so the intopten filter
         // does not exclude them. Tests that need an online owner can override.
         mockedBukkit.when(() -> Bukkit.getPlayer(any(UUID.class))).thenReturn(null);

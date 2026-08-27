@@ -16,7 +16,7 @@ Maven project, Java 21, Paper 1.21.11 API, BentoBox 3.14.0, AOneBlock 1.18.0, Ch
 - Run a single test method: `mvn test -Dtest=TopBlockManagerTest#testFormatLevelShorthandKilo`
 - The Surefire config sets a long list of `--add-opens` JVM flags — required for Mockito + MockBukkit reflection on Java 21; do not remove them when tweaking the build.
 
-Version handling is driven by Maven properties: `build.version` is the human version (currently 2.1.0), `revision` resolves to `${build.version}-SNAPSHOT` locally and to `${build.version}` under the `master` profile (activated by `GIT_BRANCH=origin/master` on Jenkins). `build.number` is `-LOCAL` locally, `-b<num>` on CI, empty on master. Don't hand-edit `<version>` — bump `build.version`.
+Version handling is driven by Maven properties: `build.version` is the human version (currently 2.1.1), `revision` resolves to `${build.version}-SNAPSHOT` locally and to `${build.version}` under the `master` profile (activated by `GIT_BRANCH=origin/master` on Jenkins). `build.number` is `-LOCAL` locally, `-b<num>` on CI, empty on master. Don't hand-edit `<version>` — bump `build.version`.
 
 ## Runtime entry points (Pladdon pattern)
 
@@ -40,9 +40,9 @@ AOneBlock and ChunkBlock have twin APIs (`getBlockListener().getAllIslands()`, `
 
 `TopBlockManager` is a `Listener` that reacts to `BentoBoxReadyEvent` (handler is `public void onBentoBoxReady` — Bukkit silently skips private @EventHandler methods, which is what broke the addon historically) to start a repeating Bukkit task. The task period is `settings.getRefreshTime() * 20L * 60` ticks (minutes → ticks). Each tick of the task:
 
-1. Calls `refreshAll()` — for every hook, reads every island of that game mode via `hook.getAllIslandData()`, so the refresh interval is intentionally coarse (default 5 min, min 1 min).
-2. Builds a fresh `List<TopTenData>` (record of island + blockNumber + lifetime + phaseName) per hook, kept in a `Map<TopBlockHook, List<TopTenData>>` — sorted at read time via `Comparator` on `lifetime` then `blockNumber`.
-3. Updates `PlaceholderManager`'s cached per-hook snapshots.
+1. Calls `refreshAll()` — for every hook, reads every island of that game mode via `hook.getAllIslandData()`, so the refresh interval is intentionally coarse (default 5 min, min 1 min). `getAllIslandData()` is a full synchronous database read (`loadObjects()` in the game mode), so `refresh(hook)` runs it on an async task and only hops back to the main thread (`processIslandData`) for the island registry / player / permission lookups — keep the async/sync split when changing this code.
+2. `processIslandData` builds a fresh `List<TopTenData>` (record of island + blockNumber + lifetime + phaseName) per hook, kept in a `Map<TopBlockHook, List<TopTenData>>` — sorted at read time via `Comparator` on `lifetime` then `blockNumber`.
+3. It then updates `PlaceholderManager`'s cached per-hook snapshots (per hook, as each async load completes).
 
 Placeholders are registered once per hook via a `runTaskLater` 10-tick delay after the first ready event (so PAPI / BentoBox's `PlaceholdersManager` is up). Names follow `island_<field>_top_<1..10>` and are scoped to each hook's `GameModeAddon`, so the PAPI prefix keeps game modes apart (`%aoneblock_...%` vs `%chunkblock_...%`). The `TopBlock.TEN` constant is the source of truth for the list size.
 
