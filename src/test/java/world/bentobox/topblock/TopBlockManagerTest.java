@@ -5,7 +5,10 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.List;
@@ -47,7 +50,8 @@ class TopBlockManagerTest extends CommonTestSetup {
         when(addon.getSettings()).thenReturn(settings);
         when(addon.getHooks()).thenReturn(List.of(hook));
         when(addon.getIslands()).thenReturn(im);
-        when(im.getIslandById(anyString())).thenReturn(Optional.of(island));
+        when(im.isIslandId(anyString())).thenReturn(true);
+        when(im.getIslandById(anyString(), eq(false))).thenReturn(Optional.of(island));
         when(island.getWorld()).thenReturn(world);
         when(hook.getGameMode()).thenReturn(gma);
         when(gma.inWorld(world)).thenReturn(true);
@@ -95,12 +99,34 @@ class TopBlockManagerTest extends CommonTestSetup {
 
     @Test
     void testRefreshSkipsIslandsWithoutBentoBoxIsland() {
-        when(im.getIslandById(anyString())).thenReturn(Optional.empty());
+        when(im.getIslandById(anyString(), eq(false))).thenReturn(Optional.empty());
         when(hook.getAllIslandData()).thenReturn(List.of(ib(80, 250, "Underground")));
 
         tbm.refreshAll();
 
         assertTrue(tbm.getTopTen(hook, 10).isEmpty());
+    }
+
+    @Test
+    void testRefreshSkipsUnknownIslandsWithoutDatabaseLookup() {
+        when(im.isIslandId(anyString())).thenReturn(false);
+        when(hook.getAllIslandData()).thenReturn(List.of(ib(80, 250, "Underground")));
+
+        tbm.refreshAll();
+
+        assertTrue(tbm.getTopTen(hook, 10).isEmpty());
+        verify(im, never()).getIslandById(anyString(), eq(false));
+        verify(im, never()).getIslandById(anyString());
+    }
+
+    @Test
+    void testRefreshDoesNotCacheIslands() {
+        when(hook.getAllIslandData()).thenReturn(List.of(ib(80, 250, "Underground")));
+
+        tbm.refreshAll();
+
+        assertEquals(1, tbm.getTopTen(hook, 10).size());
+        verify(im, never()).getIslandById(anyString());
     }
 
     @Test
