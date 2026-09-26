@@ -86,22 +86,33 @@ public class TopBlockManager implements Listener {
     }
 
     void refresh(TopBlockHook hook) {
-        // getAllIslandData() reads the game mode's whole island database, so keep it off the main thread
+        // getAllIslandData() reads the game mode's whole island database, and islands that BentoBox has not
+        // cached yet are loaded from its database on lookup, so do both off the main thread
         Bukkit.getScheduler().runTaskAsynchronously(addon.getPlugin(), () -> {
-            List<IslandBlockData> islandData = hook.getAllIslandData();
-            // Island registry, players and permissions are main-thread only
-            Bukkit.getScheduler().runTask(addon.getPlugin(), () -> processIslandData(hook, islandData));
+            List<TopTenData> candidates = resolveIslands(hook.getAllIslandData());
+            // Players and permissions are main-thread only
+            Bukkit.getScheduler().runTask(addon.getPlugin(), () -> processIslandData(hook, candidates));
         });
     }
 
-    void processIslandData(TopBlockHook hook, List<IslandBlockData> islandData) {
+    /**
+     * Pairs each game mode entry that has mined blocks with its BentoBox island. Runs async: unknown islands are
+     * skipped without touching the database, and uncached ones are loaded without being added to the cache.
+     */
+    List<TopTenData> resolveIslands(List<IslandBlockData> islandData) {
         List<TopTenData> data = new ArrayList<>();
-        islandData.stream().filter(i -> i.lifetime() > 0).forEach(i ->
-        addon.getIslands().getIslandById(i.uniqueId())
-                .filter(island -> hook.getGameMode().inWorld(island.getWorld()))
-                .filter(this::ownerInTopTen)
-                .ifPresent(island ->
+        islandData.stream().filter(i -> i.lifetime() > 0)
+        .filter(i -> addon.getIslands().isIslandId(i.uniqueId()))
+        .forEach(i -> addon.getIslands().getIslandById(i.uniqueId(), false).ifPresent(island ->
         data.add(new TopTenData(island, i.blockNumber(), i.lifetime(), i.phaseName()))));
+        return data;
+    }
+
+    void processIslandData(TopBlockHook hook, List<TopTenData> candidates) {
+        List<TopTenData> data = candidates.stream()
+                .filter(d -> hook.getGameMode().inWorld(d.island().getWorld()))
+                .filter(d -> ownerInTopTen(d.island()))
+                .toList();
         topTens.put(hook, data);
         // Update placeholders
         phm.updateTopTen();

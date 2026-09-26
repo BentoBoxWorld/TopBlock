@@ -3,6 +3,7 @@ package world.bentobox.topblock;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -54,7 +55,8 @@ class PlaceholderManagerTest extends CommonTestSetup {
         when(hook.getGameMode()).thenReturn(gameMode);
         when(gameMode.inWorld(any(org.bukkit.World.class))).thenReturn(true);
         when(island.getWorld()).thenReturn(world);
-        when(im.getIslandById(anyString())).thenReturn(Optional.of(island));
+        when(im.isIslandId(anyString())).thenReturn(true);
+        when(im.getIslandById(anyString(), eq(false))).thenReturn(Optional.of(island));
 
         // Single island in top ten
         when(hook.getAllIslandData()).thenReturn(List.of(
