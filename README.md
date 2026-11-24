@@ -1,4 +1,8 @@
 # TopBlock
+
+<!-- BentoBox stats badges: https://download.bentobox.world/admin (Badges tab) -->
+[![Servers](https://download.bentobox.world/badge/TopBlock/servers.svg)](https://download.bentobox.world/) [![Downloads](https://download.bentobox.world/badge/TopBlock/downloads.svg)](https://download.bentobox.world/) [![Minecraft](https://download.bentobox.world/badge/TopBlock/mc.svg)](https://download.bentobox.world/)
+
 [![Build Status](https://ci.codemc.org/buildStatus/icon?job=BentoBoxWorld/TopBlock)](https://ci.codemc.org/job/BentoBoxWorld/job/TopBlock/)
 
 ## About
